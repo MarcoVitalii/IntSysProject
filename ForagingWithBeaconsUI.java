@@ -1,0 +1,111 @@
+import sim.portrayal.continuous.*;
+import sim.engine.*;
+import sim.display.*;
+import sim.portrayal.simple.*;
+import sim.portrayal.*;
+import javax.swing.*;
+import java.awt.Color;
+import java.awt.*;
+
+public class ForagingWithBeaconsUI extends GUIState
+{
+    public Display2D display;
+    public JFrame displayFrame;
+    ContinuousPortrayal2D beaconsPortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal2D nestPortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal2D foodPortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal2D antsPortrayal = new ContinuousPortrayal2D();
+
+    public static void main(String[]args)
+    {
+        ForagingWithBeaconsUI vid = new ForagingWithBeaconsUI();
+        Console c = new Console(vid);
+        c.setVisible(true);
+    }
+    public ForagingWithBeaconsUI()
+    {super(new ForagingWithBeacons(System.currentTimeMillis()));}
+    public ForagingWithBeaconsUI(SimState state){super(state);}
+
+    public Object getSimulationInspectedObject() {return state;}
+    public Inspector getInspector()
+    {
+        Inspector i = super.getInspector();
+        i.setVolatile(true);
+        return i;
+    }
+
+    public static String getName() { return "Foraging with beacons project";}
+    public void start()
+    {
+        super.start();
+        setupPortrayals();
+    }
+    public void load(SimState state)
+    {
+        super.load(state);
+        setupPortrayals();
+    }
+
+    public void setupPortrayals()
+    {
+        ForagingWithBeacons fwb = (ForagingWithBeacons) state;
+        beaconsPortrayal.setField(fwb.beaconsPos);
+        beaconsPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OvalPortrayal2D()
+            {
+                public void draw( Object object,Graphics2D graphics,DrawInfo2D info)
+                {
+                    Beacon beacon = (Beacon) object;
+                    paint = new Color(20,Math.min(255,(int)(beacon.foragingPheromone/2*255)),20);
+                    super.draw(object, graphics, info);
+                }
+            },0,20, Color.black, false)
+            {
+                public void draw( Object object,Graphics2D graphics,DrawInfo2D info)
+                {
+                    Beacon beacon = (Beacon) object;
+                    paint = new Color(20,20,Math.min(255,(int)(beacon.ferryingPheromone/2*255)));
+                    super.draw(object, graphics, info);
+                }
+            });
+        antsPortrayal.setField(fwb.antsPos);
+        antsPortrayal.setPortrayalForAll(new OvalPortrayal2D()
+            {
+                public void draw( Object object, Graphics2D graphics, DrawInfo2D info){
+                    Ant ant = (Ant) object;
+                    if ( ant.mode == 1) paint = Color.red;
+                    else paint = new Color(255, 0, 255);
+                    super.draw(object, graphics, info);
+                }
+            });
+        foodPortrayal.setField(fwb.foodPos);
+        foodPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.green));
+        nestPortrayal.setField(fwb.nestPos);
+        nestPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.black));
+        display.reset();
+        display.setBackdrop(Color.white);
+        display.repaint();
+    }
+
+    public void init(Controller c)
+    {
+        super.init(c);
+        display = new Display2D(600,600,this);
+        display.setClipping(false);
+
+        displayFrame = display.createFrame();
+        displayFrame.setTitle("foraging display");
+        c.registerFrame(displayFrame);
+        displayFrame.setVisible(true);
+        display.attach(beaconsPortrayal,"beacons");
+        display.attach(antsPortrayal,"ants");
+        display.attach(foodPortrayal,"food");
+        display.attach(nestPortrayal,"nest");
+    }
+    public void quit()
+    {
+        super.quit();
+        if(displayFrame!=null) displayFrame.dispose();
+        displayFrame = null;
+        display = null;
+    }
+}
