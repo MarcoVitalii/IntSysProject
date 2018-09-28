@@ -1,0 +1,5 @@
+* Intelligent system project: Foraging ants
+This project further develops the research done in [[http://cs.gmu.edu/~sean/papers/aamas10-beacons.pdf][Collaborative foraging usin beacons]].
+
+
+It's a model developed inside [[https://cs.gmu.edu/%7Eeclab/projects/mason/][MASON]] of foraging ants in a continuous 2D space. 
