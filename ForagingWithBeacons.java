@@ -4,6 +4,7 @@ import sim.field.continuous.*;
 
 public class ForagingWithBeacons extends SimState
 {
+    public static final int MAX_BEACON_NUMBER = 70;
     public static final double WORLD_SIZE = 100;
     public static final double X_NEST = 50.0;
     public static final double Y_NEST = 50.0;
@@ -16,9 +17,11 @@ public class ForagingWithBeacons extends SimState
     double reward = 1.0;
     double pExplore = 0.05;
     double pFollow = 0.90;
+    double pDeploy = 0.9;
+    double pMove = 0.0;
     int countMax = 10;
     public double evaporationConstant = 0.95;
-    public final boolean fixedBeacons = true;
+    public final boolean fixedBeacons = false;
     public double getRange(){return range;}
     public void setRange(double newRange){if (newRange >0) range = newRange;}
     public int getAntsNumber(){return antsNumber;}
@@ -30,6 +33,8 @@ public class ForagingWithBeacons extends SimState
     public double getEvaporationConstant(){return evaporationConstant;}
     public void setEvaporationConstant(double newConst){if (newConst >=0 && newConst <=1 ) evaporationConstant = newConst;}
     public Object domEvaporationConstant () { return new sim.util.Interval(0.0,1.0);}
+    public Object domPExplore () { return new sim.util.Interval(0.0,1.0);}
+    public Object domPFollow () { return new sim.util.Interval(0.0,1.0);}
 
     public ForagingWithBeacons(long seed)
     {
@@ -53,7 +58,7 @@ public class ForagingWithBeacons extends SimState
                     beaconsPos.setObjectLocation(b,
                                                  new Double2D(spacing * x,
                                                               spacing * y));
-                    schedule.scheduleRepeating(schedule.EPOCH, 1, b);
+                    b.stopper = schedule.scheduleRepeating(schedule.EPOCH, 1, b);
 
                 }
             }
