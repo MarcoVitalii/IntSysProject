@@ -270,13 +270,13 @@ public class Ant implements Steppable
                 this.whereToDeploy = new Double2D(x,y);
 
                 //PROBLEM TO DISCUSS: this leads to deploy a beacon out of reach.
-                //if (currBeacon != null){
-                //    whereToDeploy = whereToDeploy.add(beaconsPos.getObjectLocation(currBeacon));
-                //}
-                //else {
-                //    whereToDeploy = whereToDeploy.add(currPos);
-                //}
-                whereToDeploy = whereToDeploy.add(currPos);
+                if (currBeacon != null){
+                    whereToDeploy = whereToDeploy.add(beaconsPos.getObjectLocation(currBeacon));
+                }
+                else {
+                    whereToDeploy = whereToDeploy.add(currPos);
+                }
+                //whereToDeploy = whereToDeploy.add(currPos);
 
                 if ( whereToDeploy.x >= 0 &&
                      whereToDeploy.x <= state.WORLD_SIZE &&

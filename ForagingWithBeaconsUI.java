@@ -58,7 +58,7 @@ public class ForagingWithBeaconsUI extends GUIState
                     paint = new Color(20,Math.min(255,(int)(beacon.foragingPheromone/2*255)),20);
                     super.draw(object, graphics, info);
                 }
-            },0,fwb.range, Color.black, false)
+            },0,fwb.range*2, Color.black, false)
             {
                 public void draw( Object object,Graphics2D graphics,DrawInfo2D info)
                 {

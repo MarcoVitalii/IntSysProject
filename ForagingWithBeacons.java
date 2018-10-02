@@ -15,7 +15,7 @@ public class ForagingWithBeacons extends SimState
     double range = 10.0;
     int antsNumber = 10;
     double reward = 1.0;
-    double pExplore = 0.05;
+    double pExplore = 0.005;
     double pFollow = 0.90;
     double pDeploy = 0.9;
     double pMove = 0.0;
@@ -35,6 +35,9 @@ public class ForagingWithBeacons extends SimState
     public Object domEvaporationConstant () { return new sim.util.Interval(0.0,1.0);}
     public Object domPExplore () { return new sim.util.Interval(0.0,1.0);}
     public Object domPFollow () { return new sim.util.Interval(0.0,1.0);}
+    public double getPDeploy(){return pDeploy;}
+    public void setPDeploy(double newConst){if (newConst >=0 && newConst <=1 ) pDeploy = newConst;}
+    public Object domPDeploy () { return new sim.util.Interval(0.0,1.0);}
 
     public ForagingWithBeacons(long seed)
     {
