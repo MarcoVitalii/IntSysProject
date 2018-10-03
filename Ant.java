@@ -9,6 +9,7 @@ public class Ant implements Steppable
     final static double DEPLOY_CROWD = 0.6;
     final static int DEPLOY_TRIES = 10;
     final static int MIN_WANDER = -200;
+    final static double WANDER_FRACTION = 0.7;
     //modes are defined as 0:foraging 1:ferrying
     int mode = 0;
     double reward = 0.0;
@@ -85,9 +86,10 @@ public class Ant implements Steppable
             //System.out.println("reset count");
         }
         else if (currBeacon != null &&
-                 canMove() && //TODO FINISH TO WRITE THIS IMPLEMENTATION
+                 canMove(fwb,food.numObjs >=1, nest.numObjs >= 1) &&
                  fwb.random.nextDouble() < fwb.pMove){
-            move();
+            move(fwb);
+            System.out.println("MOVING");
         }
         else if (currBeacon != null && canFollow(beaconsPos, fwb.range) &&
                  fwb.random.nextDouble() < fwb.pFollow){
@@ -310,13 +312,75 @@ public class Ant implements Steppable
         currPos = whereToDeploy;
     }
 
-    public boolean canMove()
+    public boolean canMove(ForagingWithBeacons state, boolean closeToFood, boolean closeToNest)
     {
+        Bag neighbors = state.beaconsPos.getNeighborsExactlyWithinDistance(state.beaconsPos.getObjectLocation(currBeacon),state.range);
+        Double2D ferryPos = currPos;
+        Double2D foragePos = currPos;
+        Double ferrymax = -1.0;
+        Double foragemax = -1.0;
+        int tiebreak1 = 1;
+        int tiebreak2 = 1;
+        int wander1 = 0;
+        int wander2 = 0;
+        for (int i = 0; i < neighbors.numObjs; i++){
+            Beacon obj = (Beacon) neighbors.objs[i];
+            if (obj.foragingPheromone > foragemax) {
+                foragemax = obj.foragingPheromone;
+                foragePos = state.beaconsPos.getObjectLocation(obj);
+                tiebreak1 = 1;
+                wander1 = obj.wanderingPheromone;
+            }
+            else if (obj.foragingPheromone == foragemax) {
+                if (state.random.nextDouble() < 1.0 / (++tiebreak1)){
+                    foragePos = state.beaconsPos.getObjectLocation(obj);
+                    wander1 = obj.wanderingPheromone;
+                }
+            }
+            if (obj.ferryingPheromone > ferrymax) {
+                ferrymax = obj.ferryingPheromone;
+                ferryPos = state.beaconsPos.getObjectLocation(obj);
+                wander2 = obj.wanderingPheromone;
+                tiebreak2 = 1;
+            }
+            else if (obj.ferryingPheromone == ferrymax) {
+                if (state.random.nextDouble() < 1.0 / (++tiebreak2)){
+                    ferryPos = state.beaconsPos.getObjectLocation(obj);
+                    wander2 = obj.wanderingPheromone;
+                }
+            }
+        }
+
+        int W = Math.min(wander1,wander2);
+        if (closeToFood){
+            foragePos = state.foodPos.getObjectLocation(state.foodPos.getNeighborsExactlyWithinDistance(currPos,state.range).get(0));
+            foragemax = state.reward;
+        }
+        if (closeToNest){
+            ferryPos = state.nestPos.getObjectLocation(state.nestPos.getNeighborsExactlyWithinDistance(currPos,state.range).get(0));
+            ferrymax = state.reward;
+        }
+        if (ferryPos == currPos || foragePos == currPos || ferryPos == foragePos ||
+            ferrymax == 0 || foragemax == 0) return false;
+        whereToDeploy = ferryPos.add(foragePos).multiply(0.5);
+
+        //checking the second condition in the article
+        if (currBeacon.wanderingPheromone >= MIN_WANDER) return true;
+        for(int i = 0 ; i < neighbors.numObjs ; i++){
+            Beacon b = (Beacon) neighbors.objs[i];
+            if (b == currBeacon) continue;
+            if (b.wanderingPheromone < WANDER_FRACTION * W){
+                if (state.beaconsPos.getObjectLocation(b).distance(whereToDeploy) > state.range) return false;
+            }
+        }
+        //Without obstacles the checks are finished.
         return true;
     }
-    public void move()
+    public void move(ForagingWithBeacons state)
     {
-
+        state.beaconsPos.setObjectLocation(currBeacon, whereToDeploy);
+        state.antsPos.setObjectLocation(this,whereToDeploy);
+        currPos = whereToDeploy;
     }
     public boolean canRemove (ForagingWithBeacons state,Bag neighbors,
                               boolean foodWithinRange, boolean nestWithinRange)

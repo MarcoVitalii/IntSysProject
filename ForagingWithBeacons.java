@@ -18,7 +18,7 @@ public class ForagingWithBeacons extends SimState
     double pExplore = 0.005;
     double pFollow = 0.90;
     double pDeploy = 0.9;
-    double pMove = 0.0;
+    double pMove = 0.3;
     int countMax = 10;
     public double evaporationConstant = 0.95;
     public final boolean fixedBeacons = false;
