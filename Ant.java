@@ -62,6 +62,8 @@ public class Ant implements Steppable
             antsPos.setObjectLocation(this, fwb.nestPos.getObjectLocation(nest.get(0)));
             mode = 0;
             reward = fwb.reward;
+            Nest home = (Nest) nest.objs[0];
+            home.foodRecovered += 1;
             //System.out.println("ho trovato la tana");
         }
         else if (currBeacon != null && canRemove(fwb,neighbors,
@@ -89,7 +91,7 @@ public class Ant implements Steppable
                  canMove(fwb,food.numObjs >=1, nest.numObjs >= 1) &&
                  fwb.random.nextDouble() < fwb.pMove){
             move(fwb);
-            System.out.println("MOVING");
+            //System.out.println("MOVING");
         }
         else if (currBeacon != null && canFollow(beaconsPos, fwb.range) &&
                  fwb.random.nextDouble() < fwb.pFollow){
@@ -257,7 +259,7 @@ public class Ant implements Steppable
     {
         Continuous2D beaconsPos = state.beaconsPos;
         if (beaconsPos.size() > state.MAX_BEACON_NUMBER) {
-            System.out.println("Max beacons reached.");
+            //System.out.println("Max beacons reached.");
             return false;
         }
 
@@ -392,7 +394,7 @@ public class Ant implements Steppable
             nestWithinRange == false &&
             currBeacon.wanderingPheromone <= MIN_WANDER)
             {
-                System.out.println("killed by neighborhood");
+                //System.out.println("killed by neighborhood");
                 return true;
             }
         // System.out.println("butcher at "+currPos+" with beaocon "+ state.beaconsPos.getObjectLocation(currBeacon));

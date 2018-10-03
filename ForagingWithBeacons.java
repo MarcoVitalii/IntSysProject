@@ -13,13 +13,13 @@ public class ForagingWithBeacons extends SimState
     public Continuous2D foodPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D nestPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     double range = 10.0;
-    int antsNumber = 10;
+    int antsNumber = 50;
     double reward = 1.0;
-    double pExplore = 0.005;
+    double pExplore = 0.0001;
     double pFollow = 0.90;
     double pDeploy = 0.9;
-    double pMove = 0.3;
-    int countMax = 10;
+    double pMove = 0.1;
+    int countMax = 5;
     public double evaporationConstant = 0.95;
     public final boolean fixedBeacons = false;
     public double getRange(){return range;}

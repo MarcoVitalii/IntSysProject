@@ -50,7 +50,7 @@ public class ForagingWithBeaconsUI extends GUIState
     {
         ForagingWithBeacons fwb = (ForagingWithBeacons) state;
         beaconsPortrayal.setField(fwb.beaconsPos);
-        beaconsPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OvalPortrayal2D()
+        beaconsPortrayal.setPortrayalForAll(new CircledPortrayal2D(new HexagonalPortrayal2D(false)
             {
                 public void draw( Object object,Graphics2D graphics,DrawInfo2D info)
                 {
@@ -73,14 +73,14 @@ public class ForagingWithBeaconsUI extends GUIState
                 public void draw( Object object, Graphics2D graphics, DrawInfo2D info){
                     Ant ant = (Ant) object;
                     if ( ant.mode == 1) paint = Color.red;
-                    else paint = new Color(255, 0, 255);
+                    else paint = Color.yellow;
                     super.draw(object, graphics, info);
                 }
             });
         foodPortrayal.setField(fwb.foodPos);
-        foodPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.green));
+        foodPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.cyan));
         nestPortrayal.setField(fwb.nestPos);
-        nestPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.black));
+        nestPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.magenta));
         display.reset();
         display.setBackdrop(Color.white);
         display.repaint();
