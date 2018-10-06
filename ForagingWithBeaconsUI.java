@@ -72,7 +72,7 @@ public class ForagingWithBeaconsUI extends GUIState
             {
                 public void draw( Object object, Graphics2D graphics, DrawInfo2D info){
                     Ant ant = (Ant) object;
-                    if ( ant.mode == 1) paint = Color.red;
+                    if ( ant.ferrying) paint = Color.red;
                     else paint = Color.yellow;
                     super.draw(object, graphics, info);
                 }

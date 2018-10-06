@@ -10,13 +10,14 @@ public class Ant implements Steppable
     final static int DEPLOY_TRIES = 10;
     final static int MIN_WANDER = -200;
     final static double WANDER_FRACTION = 0.7;
-    //modes are defined as 0:foraging 1:ferrying
-    int mode = 0;
+    boolean foraging = true;
+    boolean ferrying = !foraging;
     double reward = 0.0;
     int count = 0;
     Double2D currPos;
     Beacon currBeacon;
     double discount = 0.9;
+    final static boolean wandering = true;
 
     //values needed to compute values inside methods that are not returned by
     //boolean functions
@@ -38,74 +39,64 @@ public class Ant implements Steppable
         currPos = antsPos.getObjectLocation(this);
         currBeacon = findCurrBeacon(fwb, currPos, fwb.range);
         //neighbors are needed in several functions so they are computed here once
-        Bag neighbors = beaconsPos.getNeighborsExactlyWithinDistance(currPos,
-                                                                      fwb.range);
-        // System.out.println("inizio step: posizione e beacon");
-        //System.out.print(currPos);
-        //System.out.print(beaconsPos.getObjectLocation(currBeacon));
+        Bag neighbors = beaconsPos.getNeighborsExactlyWithinDistance(currPos, fwb.range);
 
-        if (currBeacon != null){
-            updatePheromones(neighbors, currBeacon);
-            //     System.out.println("first pheromone update");
-        }
         // this implementation of finding the food or nest within range allows
         // to compute later their position to move the ant
-        Bag food = fwb.foodPos.getNeighborsExactlyWithinDistance(currPos, fwb.range);
-        Bag nest = fwb.nestPos.getNeighborsExactlyWithinDistance(currPos, fwb.range);
-        if (food.size() != 0 && mode == 0){
-            antsPos.setObjectLocation(this, fwb.foodPos.getObjectLocation(food.get(0)));
-            reward = fwb.reward;
-            mode = 1;
-            // System.out.println("ho trovato il cibo!");
+        Bag foodInRange = fwb.foodPos.getNeighborsExactlyWithinDistance(currPos, fwb.range);
+        Bag nestInRange = fwb.nestPos.getNeighborsExactlyWithinDistance(currPos, fwb.range);
+        boolean hasBeacon = currBeacon != null;
+        boolean hasFoodInRange = foodInRange.size() > 0;
+        boolean hasNestInRange = nestInRange.size() > 0;
+        if (hasBeacon){
+            updatePheromones(neighbors);
+            //     System.out.println("first pheromone update");
         }
-        else if (nest.size() != 0 && mode == 1){
-            antsPos.setObjectLocation(this, fwb.nestPos.getObjectLocation(nest.get(0)));
-            mode = 0;
+        if (hasFoodInRange && foraging){
+            antsPos.setObjectLocation(this, fwb.foodPos.getObjectLocation(foodInRange.get(0)));
             reward = fwb.reward;
-            Nest home = (Nest) nest.objs[0];
-            home.foodRecovered += 1;
-            //System.out.println("ho trovato la tana");
+            foraging = false;
+            ferrying = true;
         }
-        else if (currBeacon != null && canRemove(fwb,neighbors,
-                                                 (food.numObjs >= 1),
-                                                 (nest.numObjs >=1))){
-            // System.out.println("ucciso un beacon");
+        else if (hasNestInRange && ferrying){
+            antsPos.setObjectLocation(this, fwb.nestPos.getObjectLocation(nestInRange.get(0)));
+            reward = fwb.reward;
+            foraging = true;
+            ferrying = false;
+            Nest nest = (Nest) nestInRange.objs[0];
+            nest.foodRecovered += 1;
+        }
+        else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)){
             remove(beaconsPos);
         }
-        else if (count > 0 && currBeacon != null && neighbors.size() > 1 ){
+        else if (count > 0 && hasBeacon && (neighbors.size() > 1) ){
             Beacon next;
             while(true){
                 next = (Beacon) neighbors.get(fwb.random.nextInt(neighbors.size()));
-                if ( next != currBeacon) break;
+                if (next != currBeacon) break;
             }
             currPos = beaconsPos.getObjectLocation(next);
-            antsPos.setObjectLocation(this,currPos);
-            count -= 1;
-            //System.out.println("RandomMove. left "+count );
+            antsPos.setObjectLocation(this, currPos);
+            count -= 1; 
         }
         else if (fwb.random.nextDouble() < fwb.pExplore){
             count = fwb.countMax;
-            //System.out.println("reset count");
         }
-        else if (currBeacon != null &&
-                 canMove(fwb,food.numObjs >=1, nest.numObjs >= 1) &&
+        else if (hasBeacon && canMove(fwb, hasFoodInRange, hasNestInRange) &&
                  fwb.random.nextDouble() < fwb.pMove){
             move(fwb);
-            //System.out.println("MOVING");
         }
-        else if (currBeacon != null && canFollow(beaconsPos, fwb.range) &&
+        else if (hasBeacon && canFollow(beaconsPos, fwb.range) &&
                  fwb.random.nextDouble() < fwb.pFollow){
-            currPos = follow(fwb, beaconsPos, false, fwb.range);
+            currPos = follow(fwb, beaconsPos, !wandering, fwb.range);
             antsPos.setObjectLocation(this, currPos);
-            // System.out.print("following curr pheromone\n");
         }
-        else if (canDeploy(fwb) &&
-                 fwb.random.nextDouble() < fwb.pDeploy){
+        else if (canDeploy(fwb) && fwb.random.nextDouble() < fwb.pDeploy){
             deploy(fwb);
             // System.out.println("deployed a new beacon");
         }
-        else if (currBeacon != null){
-            currPos = follow(fwb, beaconsPos, true, fwb.range);
+        else if (hasBeacon){
+            currPos = follow(fwb, beaconsPos, wandering, fwb.range);
             antsPos.setObjectLocation(this, currPos);
             //System.out.println("wandering");
         }
@@ -126,10 +117,11 @@ public class Ant implements Steppable
             // System.out.println("beaconless random move");
         }
         currBeacon = findCurrBeacon(fwb, currPos, fwb.range);
-        if (currBeacon != null){
+        hasBeacon = currBeacon != null;
+        if (hasBeacon){
             neighbors = beaconsPos.getNeighborsExactlyWithinDistance(currPos,
                                                                       fwb.range);
-            updatePheromones(neighbors, currBeacon);
+            updatePheromones(neighbors);
         }
         reward = 0;
 
@@ -155,14 +147,14 @@ public class Ant implements Steppable
         return closest;
     }
 
-    public void updatePheromones(Bag neighbors, Beacon b)
+    public void updatePheromones(Bag neighbors)
     {
-        double maxForaging = b.foragingPheromone;
-        double maxFerrying = b.ferryingPheromone;
+        double maxForaging = currBeacon.foragingPheromone;
+        double maxFerrying = currBeacon.ferryingPheromone;
         int len = neighbors.size();
         double rewardForaging;
         double rewardFerrying;
-        if (mode == 1){
+        if (ferrying){
             rewardForaging = reward;
             rewardFerrying = 0;
         }
@@ -172,7 +164,7 @@ public class Ant implements Steppable
         }
         for (int i = 0; i < len; i++){
             Beacon otherB = (Beacon)neighbors.get(i);
-            if (otherB == b) continue;
+            if (otherB == currBeacon) continue;
             double valueForaging = otherB.foragingPheromone * discount +
                 rewardForaging;
             maxForaging = Math.max(maxForaging,valueForaging);
@@ -186,27 +178,21 @@ public class Ant implements Steppable
             maxFerrying +=rewardFerrying;
             maxForaging +=rewardForaging;
         }
-
-        // System.out.println("aggiornamento beacon:");
-        //System.out.print(maxFerrying);
-        //System.out.print(maxForaging);
-        //System.out.print(b.wanderingPheromone);
-        //System.out.println("");
-        b.ferryingPheromone = maxFerrying;
-        b.foragingPheromone = maxForaging;
-        b.wanderingPheromone -= 1;
+        currBeacon.ferryingPheromone = maxFerrying;
+        currBeacon.foragingPheromone = maxForaging;
+        currBeacon.wanderingPheromone -= 1;
     }
 
 
     public boolean canFollow(Continuous2D beaconsPos, double range)
     {
-        Bag candidates = beaconsPos.getNeighborsExactlyWithinDistance(currPos, range );
+        Bag candidates = beaconsPos.getNeighborsExactlyWithinDistance(currPos, range);
         int len = candidates.size();
         double max = -1;
         for (int i = 0; i < len; i++){
             Beacon cand = (Beacon) candidates.get(i);
             if (cand == currBeacon ) continue;
-            if (mode == 0){
+            if (foraging){
                 double val = cand.foragingPheromone;
                 if (val > max) max = val;
 
@@ -216,7 +202,9 @@ public class Ant implements Steppable
                 if (val > max) max = val;
             }
         }
-        if (max != -1){
+        //MODIFIED: returns true if there is a beacon with higher pheromone than currBeacon
+        if (foraging && max > currBeacon.foragingPheromone ||
+            ferrying && max > currBeacon.ferryingPheromone){
             return true;
         }
         else
@@ -227,7 +215,7 @@ public class Ant implements Steppable
     {
         Bag candidates = beaconsPos.getNeighborsExactlyWithinDistance(currPos, range);
         //max is unreasonably high to be discarded even if wandering as negative numbers are used
-        double max = - 100000;
+        double max = -1e40;
         int tieBreak = 1;
         int len = candidates.size();
         Beacon cand = null;
@@ -239,10 +227,10 @@ public class Ant implements Steppable
             if (wandering) {
                 val = cand.wanderingPheromone;
             }
-            else if (mode == 0){
+            else if (foraging){
                 val = cand.foragingPheromone;
             }
-            else if (mode == 1){
+            else if (ferrying){
                 val = cand.ferryingPheromone;
             }
             if (val < max) continue;
