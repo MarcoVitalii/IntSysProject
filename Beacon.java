@@ -11,11 +11,13 @@ public class Beacon extends OvalPortrayal2D implements Steppable
     public double ferryingPheromone = 0.0;
     public int wanderingPheromone = 0;
     public Stoppable stopper = null;
+    //public int neighborsCount = 0;
 
     //getters are needed to inspect the elements inside the visualization
     public double getForagingPheromone() {return foragingPheromone;}
     public double getFerryingPheromone() {return ferryingPheromone;}
     public int getWanderingPheromone() {return wanderingPheromone;}
+    //public int getNeighborsCount() {return neighborsCount;}
     //public void setFerryingPheromone(double ferry) {if(ferry >0) ferryingPheromone = ferry;}
     //public void setForagingPheromone(double forag) { if (forag >0) foragingPheromone = 0.0;}
 
@@ -24,11 +26,12 @@ public class Beacon extends OvalPortrayal2D implements Steppable
         //beta is not inside Beacon class to allow changes from the console
         //during the simulation.
         ForagingWithBeacons fwb = (ForagingWithBeacons) state;
+        //System.out.println("Step at time "+fwb.schedule.getTime()+" "+this);
         double beta = fwb.evaporationConstant;
         foragingPheromone *= beta;
         ferryingPheromone *= beta;
+        //neighborsCount = fwb.beaconsPos.getNeighborsExactlyWithinDistance(fwb.beaconsPos.getObjectLocation(this),fwb.range).size()-1;
 
-        //System.out.print("evaporazione feromoni: forage "+foragingPheromone+" ferry: " + ferryingPheromone+"\n");
     }
 
     /* Nicer option than what's actually happening with anonymus classes inside

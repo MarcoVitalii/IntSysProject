@@ -10,14 +10,14 @@ public class Ant implements Steppable
     final static int DEPLOY_TRIES = 10;
     final static int MIN_WANDER = -200;
     final static double WANDER_FRACTION = 0.7;
+    final static double discount = 0.9;
+    final static boolean wandering = true;
     boolean foraging = true;
-    boolean ferrying = !foraging;
+    boolean ferrying = false;
     double reward = 0.0;
     int count = 0;
     Double2D currPos;
     Beacon currBeacon;
-    double discount = 0.9;
-    final static boolean wandering = true;
 
     //values needed to compute values inside methods that are not returned by
     //boolean functions
@@ -34,6 +34,7 @@ public class Ant implements Steppable
     public void step(SimState state)
     {
         ForagingWithBeacons fwb = (ForagingWithBeacons) state;
+        //System.out.print("Step at time "+fwb.schedule.getTime());
         Continuous2D beaconsPos = fwb.beaconsPos;
         Continuous2D antsPos = fwb.antsPos;
         currPos = antsPos.getObjectLocation(this);
@@ -48,6 +49,9 @@ public class Ant implements Steppable
         boolean hasBeacon = currBeacon != null;
         boolean hasFoodInRange = foodInRange.size() > 0;
         boolean hasNestInRange = nestInRange.size() > 0;
+
+
+        //System.out.print("ant "+this+ ": ");
         if (hasBeacon){
             updatePheromones(neighbors);
             //     System.out.println("first pheromone update");
@@ -57,6 +61,7 @@ public class Ant implements Steppable
             reward = fwb.reward;
             foraging = false;
             ferrying = true;
+            //System.out.println("Food Reached.");
         }
         else if (hasNestInRange && ferrying){
             antsPos.setObjectLocation(this, fwb.nestPos.getObjectLocation(nestInRange.get(0)));
@@ -65,8 +70,10 @@ public class Ant implements Steppable
             ferrying = false;
             Nest nest = (Nest) nestInRange.objs[0];
             nest.foodRecovered += 1;
+            //System.out.println("nest Reached.");
         }
         else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)){
+            //System.out.println("removed beacon "+currBeacon);
             remove(beaconsPos);
         }
         else if (count > 0 && hasBeacon && (neighbors.size() > 1) ){
@@ -78,22 +85,26 @@ public class Ant implements Steppable
             currPos = beaconsPos.getObjectLocation(next);
             antsPos.setObjectLocation(this, currPos);
             count -= 1; 
+            //System.out.println("Exploring. "+count+" turns left.");
         }
         else if (fwb.random.nextDouble() < fwb.pExplore){
             count = fwb.countMax;
+            //System.out.println("Started exploration");
         }
         else if (hasBeacon && canMove(fwb, hasFoodInRange, hasNestInRange) &&
                  fwb.random.nextDouble() < fwb.pMove){
             move(fwb);
+            //System.out.println("Moved beacon "+currBeacon);
         }
         else if (hasBeacon && canFollow(beaconsPos, fwb.range) &&
                  fwb.random.nextDouble() < fwb.pFollow){
             currPos = follow(fwb, beaconsPos, !wandering, fwb.range);
             antsPos.setObjectLocation(this, currPos);
+            //System.out.println("followed pheromone");
         }
         else if (canDeploy(fwb) && fwb.random.nextDouble() < fwb.pDeploy){
             deploy(fwb);
-            // System.out.println("deployed a new beacon");
+            //System.out.println("deployed the beacon "+currBeacon );
         }
         else if (hasBeacon){
             currPos = follow(fwb, beaconsPos, wandering, fwb.range);
@@ -114,7 +125,7 @@ public class Ant implements Steppable
             }
             antsPos.setObjectLocation(this,rndMove);
             currPos = rndMove;
-            // System.out.println("beaconless random move");
+            //System.out.println("beaconless random move");
         }
         currBeacon = findCurrBeacon(fwb, currPos, fwb.range);
         hasBeacon = currBeacon != null;
@@ -297,7 +308,8 @@ public class Ant implements Steppable
         //System.out.println("where: "+whereToDeploy);
         state.beaconsPos.setObjectLocation(b,whereToDeploy);
         state.antsPos.setObjectLocation(this, whereToDeploy);
-        b.stopper = state.schedule.scheduleRepeating(b,1);
+        //b.stopper = state.schedule.scheduleRepeating(b,1);
+        b.stopper = state.schedule.scheduleRepeating(state.schedule.getTime()+0.5,b);
         currBeacon = b;
         currPos = whereToDeploy;
     }
