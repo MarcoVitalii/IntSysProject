@@ -3,3 +3,11 @@ This project further develops the research done in [[http://cs.gmu.edu/~sean/pap
 
 
 It's a model developed inside [[https://cs.gmu.edu/%7Eeclab/projects/mason/][MASON]] of foraging ants in a continuous 2D space. 
+
+** Running the project: 
+Once downloaded MASON from [[https://cs.gmu.edu/%7Eeclab/projects/mason/#Download][the ufficial website]], compile all the java classes inside the project and then run the ForagingWithAntsUI class for a graphical interface to interact with . The simulation can be controlled by the start, pause and stop buttons from the console and there's a model section to modify all relevant parameters of the model.
+
+The graphical representation of every component of the model is as it follows:
+Beacons are represented as hexagons with a circle aroun them with the size of their range. The hexagon's color reflects the value of foraging pheromone while the outer circle's color reflects the value of ferrying pheromone. 
+Ants are either yellow if they  don't carry food or red if they do. 
+Nests are represented as magenta ovals and food sources are cyan ovals.
