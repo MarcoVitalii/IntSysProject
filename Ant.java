@@ -4,7 +4,7 @@ import sim.util.*;
 
 public class Ant implements Steppable
 {
-    //Constants needed to deploy beacons:
+    //variables for the model
     final static double DEPLOY_RANGE = 0.9;
     final static double DEPLOY_CROWD = 0.6;
     final static int DEPLOY_TRIES = 10;
@@ -18,7 +18,8 @@ public class Ant implements Steppable
     int count = 0;
     Double2D currPos;
     Beacon currBeacon;
-
+    //variables for statistic purposes
+    int travelLength = 0;
     //values needed to compute values inside methods that are not returned by
     //boolean functions
     //eventualMerge is needed to remove Beacons and pass a value to remove
@@ -33,6 +34,7 @@ public class Ant implements Steppable
 
     public void step(SimState state)
     {
+        travelLength += 1;
         ForagingWithBeacons fwb = (ForagingWithBeacons) state;
         //System.out.print("Step at time "+fwb.schedule.getTime());
         Continuous2D beaconsPos = fwb.beaconsPos;
@@ -69,7 +71,9 @@ public class Ant implements Steppable
             foraging = true;
             ferrying = false;
             Nest nest = (Nest) nestInRange.objs[0];
-            nest.foodRecovered += 1;
+            nest.meanTravelLength = (double)(nest.meanTravelLength * nest.foodRecovered + travelLength)/ (++nest.foodRecovered); 
+            travelLength = 0;
+            //nest.foodRecovered += 1;
             //System.out.println("nest Reached.");
         }
         else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)){
@@ -213,6 +217,7 @@ public class Ant implements Steppable
                 if (val > max) max = val;
             }
         }
+
         //MODIFIED: returns true if there is a beacon with higher pheromone than currBeacon
         if (foraging && max > currBeacon.foragingPheromone ||
             ferrying && max > currBeacon.ferryingPheromone){
@@ -220,6 +225,8 @@ public class Ant implements Steppable
         }
         else
             return false;
+        //if (max != -1) return true;
+        //return false;
     }
 
     public Double2D follow(ForagingWithBeacons fwb, Continuous2D beaconsPos, boolean wandering, double range)

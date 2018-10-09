@@ -8,6 +8,7 @@ public class ForagingWithBeacons extends SimState
     public static final double WORLD_SIZE = 100;
     public static final double X_NEST = 50.0;
     public static final double Y_NEST = 50.0;
+    public static final int MEAN_TIME = 50;
     public Continuous2D antsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D beaconsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D foodPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
@@ -72,7 +73,9 @@ public class ForagingWithBeacons extends SimState
             antsPos.setObjectLocation(ant, new Double2D(X_NEST, Y_NEST));
             schedule.scheduleRepeating(schedule.EPOCH, 0, ant);
         }
-        nestPos.setObjectLocation(new Nest(), new Double2D(X_NEST, Y_NEST));
+        Nest nest = new Nest();
+        nestPos.setObjectLocation(nest, new Double2D(X_NEST, Y_NEST));
+        schedule.scheduleRepeating(schedule.EPOCH, 1, nest, MEAN_TIME);
         foodPos.setObjectLocation(new Food(), new Double2D(90.0, 90.0));
     }
     public static void main(String[] args)
