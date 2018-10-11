@@ -6,9 +6,9 @@ public class ForagingWithBeacons extends SimState
 {
     public static final int MAX_BEACON_NUMBER = 70;
     public static final double WORLD_SIZE = 100;
-    public static final double X_NEST = 50.0;
-    public static final double Y_NEST = 50.0;
-    public static final int MEAN_TIME = 50;
+    public static final double X_NEST = 20.0;
+    public static final double Y_NEST = 20.0;
+    public static final int MEAN_TIME = 20;
     public Continuous2D antsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D beaconsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D foodPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
