@@ -32,7 +32,7 @@ public class Ant implements Steppable
     int localityCount = 0;
     public int getLocalityCount() {return localityCount;}
     public Beacon getCurrentBeacon() {return currBeacon;}
-    double tau = 10;
+    double tau = 40;
     //whereToDeploy is needed to pass a value to deploy()
     Double2D whereToDeploy = new Double2D(0,0);
 
@@ -85,8 +85,8 @@ public class Ant implements Steppable
             //nest.foodRecovered += 1;
             if(printStatus) System.out.println("nest Reached.");
         }
-        else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)){
-                 //&& fwb.random.nextDouble() <= Math.exp(-localityCount/tau)){
+        else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)
+                 && fwb.random.nextDouble() <= Math.pow((-localityCount+tau)/tau,0.2)){
             if(printStatus) System.out.println("removed beacon "+currBeacon);
             remove(beaconsPos);
         }
