@@ -18,7 +18,7 @@ public class ForagingWithBeacons extends SimState
     double reward = 1.0;
     double pExplore = 0.0001;
     double pFollow = 0.90;
-    double pDeploy = 0.9;
+    double pDeploy = 0.5;
     double pMove = 0.1;
     int countMax = 5;
     public double evaporationConstant = 0.95;
@@ -39,6 +39,13 @@ public class ForagingWithBeacons extends SimState
     public double getPDeploy(){return pDeploy;}
     public void setPDeploy(double newConst){if (newConst >=0 && newConst <=1 ) pDeploy = newConst;}
     public Object domPDeploy () { return new sim.util.Interval(0.0,1.0);}
+    public Object domPMove () { return new sim.util.Interval(0.0,1.0);}
+    public double getPMove(){return pMove;}
+    public void setPMove(double newP) {if (newP >=0 && newP <=1) pMove = newP;}
+
+
+    public int getBeaconsNumber(){return beaconsPos.size();}
+
 
     public ForagingWithBeacons(long seed)
     {
