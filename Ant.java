@@ -32,7 +32,7 @@ public class Ant implements Steppable
     int localityCount = 0;
     public int getLocalityCount() {return localityCount;}
     public Beacon getCurrentBeacon() {return currBeacon;}
-    double tau = 10;
+    double tau = 40;
     //whereToDeploy is needed to pass a value to deploy()
     Double2D whereToDeploy = new Double2D(0,0);
 
@@ -85,8 +85,8 @@ public class Ant implements Steppable
             //nest.foodRecovered += 1;
             if(printStatus) System.out.println("nest Reached.");
         }
-        else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)){
-                 //&& fwb.random.nextDouble() <= Math.exp(-localityCount/tau)){
+        else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)
+                 && fwb.random.nextDouble() <= Math.pow((-localityCount+tau)/tau,0.5)){
             if(printStatus) System.out.println("removed beacon "+currBeacon);
             remove(beaconsPos);
         }
@@ -116,7 +116,8 @@ public class Ant implements Steppable
             antsPos.setObjectLocation(this, currPos);
             if(printStatus) System.out.println("followed pheromone");
         }
-        else if (canDeploy(fwb) && fwb.random.nextDouble() < fwb.pDeploy){
+        //else if (canDeploy(fwb) && fwb.random.nextDouble() < fwb.pDeploy){
+        else if (canDeploy(fwb) && fwb.random.nextDouble() < Math.exp(-fwb.beaconsPos.size()/fwb.MAX_BEACON_NUMBER)){
             deploy(fwb);
             if(printStatus) System.out.println("deployed the beacon "+currBeacon );
         }
@@ -274,11 +275,12 @@ public class Ant implements Steppable
     public boolean canDeploy(ForagingWithBeacons state)
     {
         Continuous2D beaconsPos = state.beaconsPos;
+        /* CHANGED BY USING PDEPLOY(number of beacons)
         if (beaconsPos.size() >= state.MAX_BEACON_NUMBER) {
             //System.out.println("Max beacons reached.");
             return false;
         }
-
+        */
         for (int i = 0; i < DEPLOY_TRIES; i++){
             while (true){
                 double r = (state.random.nextDouble() *
