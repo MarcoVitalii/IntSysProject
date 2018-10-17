@@ -10,17 +10,17 @@ public class ForagingWithBeacons extends SimState
     public static boolean PRINT_ON_FILE = true;
     public static final int MAX_BEACON_NUMBER = 50;
     public static final double WORLD_SIZE = 100;
-    public static final double X_NEST = 20.0;
-    public static final double Y_NEST = 20.0;
+    public static final double X_NEST = 10.0;
+    public static final double Y_NEST = 10.0;
     public static final int MEAN_TIME = 50;
     public Continuous2D antsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D beaconsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D foodPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D nestPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     double range = 10.0;
-    int antsNumber = 50;
+    int antsNumber = 100;
     double reward = 1.0;
-    double pExplore = 0.0001;
+    double pExplore = 0.001;
     double pFollow = 0.90;
     double pDeploy = 0.5;
     double pMove = 0.1;
@@ -40,9 +40,9 @@ public class ForagingWithBeacons extends SimState
     public Object domEvaporationConstant () { return new sim.util.Interval(0.0,1.0);}
     public Object domPExplore () { return new sim.util.Interval(0.0,1.0);}
     public Object domPFollow () { return new sim.util.Interval(0.0,1.0);}
-    public double getPDeploy(){return pDeploy;}
-    public void setPDeploy(double newConst){if (newConst >=0 && newConst <=1 ) pDeploy = newConst;}
-    public Object domPDeploy () { return new sim.util.Interval(0.0,1.0);}
+    //public double getPDeploy(){return pDeploy;}
+    //public void setPDeploy(double newConst){if (newConst >=0 && newConst <=1 ) pDeploy = newConst;}
+    //public Object domPDeploy () { return new sim.util.Interval(0.0,1.0);}
     public Object domPMove () { return new sim.util.Interval(0.0,1.0);}
     public double getPMove(){return pMove;}
     public void setPMove(double newP) {if (newP >=0 && newP <=1) pMove = newP;}
@@ -91,13 +91,13 @@ public class ForagingWithBeacons extends SimState
 
         //New part to create data files
         if (PRINT_ON_FILE){
-            schedule.scheduleRepeating(schedule.EPOCH,1, new Steppable(){
+            schedule.scheduleRepeating(schedule.EPOCH,2, new Steppable(){
                     public void step (SimState state)
                     {
                         ForagingWithBeacons fwb = (ForagingWithBeacons) state;
                         Nest nest =(Nest)(fwb.nestPos.getAllObjects().get(0));
                         try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/"+seed()+".csv",true))){
-                            bw.write(fwb.schedule.time()+","+nest.foodRecovered+","+fwb.beaconsPos.size()+"\n");
+                            bw.write(fwb.schedule.time()+","+nest.foodIncomingRate+","+fwb.beaconsPos.size()+","+nest.meanTravelLength+"\n");
                         }
                         catch(IOException e){}
                     }
