@@ -23,7 +23,13 @@ public class ForagingWithBeaconsUI extends GUIState
         c.setVisible(true);
     }
     public ForagingWithBeaconsUI()
-    {super(new ForagingWithBeacons(System.currentTimeMillis()));}
+    {
+        super(new ForagingWithBeacons(System.currentTimeMillis()));
+
+        //added to remove the printed on file data when using the GUI
+        ForagingWithBeacons sim = (ForagingWithBeacons)state;
+        sim.PRINT_ON_FILE = false;
+    }
     public ForagingWithBeaconsUI(SimState state){super(state);}
 
     public Object getSimulationInspectedObject() {return state;}
@@ -37,6 +43,7 @@ public class ForagingWithBeaconsUI extends GUIState
     public static String getName() { return "Foraging with beacons project";}
     public void start()
     {
+
         super.start();
         setupPortrayals();
     }

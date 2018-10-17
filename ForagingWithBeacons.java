@@ -1,14 +1,18 @@
 import sim.engine.*;
 import sim.util.*;
 import sim.field.continuous.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ForagingWithBeacons extends SimState
 {
-    public static final int MAX_BEACON_NUMBER = 70;
+    public static boolean PRINT_ON_FILE = true;
+    public static final int MAX_BEACON_NUMBER = 50;
     public static final double WORLD_SIZE = 100;
     public static final double X_NEST = 20.0;
     public static final double Y_NEST = 20.0;
-    public static final int MEAN_TIME = 20;
+    public static final int MEAN_TIME = 50;
     public Continuous2D antsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D beaconsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D foodPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
@@ -84,6 +88,21 @@ public class ForagingWithBeacons extends SimState
         nestPos.setObjectLocation(nest, new Double2D(X_NEST, Y_NEST));
         schedule.scheduleRepeating(schedule.EPOCH, 1, nest, MEAN_TIME);
         foodPos.setObjectLocation(new Food(), new Double2D(90.0, 90.0));
+
+        //New part to create data files
+        if (PRINT_ON_FILE){
+            schedule.scheduleRepeating(schedule.EPOCH,1, new Steppable(){
+                    public void step (SimState state)
+                    {
+                        ForagingWithBeacons fwb = (ForagingWithBeacons) state;
+                        Nest nest =(Nest)(fwb.nestPos.getAllObjects().get(0));
+                        try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/"+seed()+".csv",true))){
+                            bw.write(fwb.schedule.time()+","+nest.foodRecovered+","+fwb.beaconsPos.size()+"\n");
+                        }
+                        catch(IOException e){}
+                    }
+                },MEAN_TIME);
+        }
     }
     public static void main(String[] args)
     {
