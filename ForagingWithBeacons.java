@@ -12,6 +12,8 @@ public class ForagingWithBeacons extends SimState
     public static final double WORLD_SIZE = 100;
     public static final double X_NEST = 10.0;
     public static final double Y_NEST = 10.0;
+    public static final double X_FOOD = 90.0;
+    public static final double Y_FOOD = 90.0;
     public static final int MEAN_TIME = 50;
     public Continuous2D antsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D beaconsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
@@ -87,10 +89,29 @@ public class ForagingWithBeacons extends SimState
         Nest nest = new Nest();
         nestPos.setObjectLocation(nest, new Double2D(X_NEST, Y_NEST));
         schedule.scheduleRepeating(schedule.EPOCH, 1, nest, MEAN_TIME);
-        foodPos.setObjectLocation(new Food(), new Double2D(90.0, 90.0));
-
-        //New part to create data files
+        foodPos.setObjectLocation(new Food(), new Double2D(X_FOOD, Y_FOOD));
+        //New part to create data files that logs performances
         if (PRINT_ON_FILE){
+            try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/settings.txt"))){
+                bw.write("ants number: "+ antsNumber
+                         +"\nrange: "+range
+                         +"\nreward: "+ reward
+                         +"\ncountMax: " + countMax
+                         +"\npExplore: " + pExplore
+                         +"\npFollow: " + pFollow
+                         +"\npMove: " + pMove
+                         +"\nevaporationConstant: " + evaporationConstant
+                         +"\nMAX_BEACON_NUMBER: "+ MAX_BEACON_NUMBER
+                         +"\nWORLD_SIZE: " + WORLD_SIZE
+                         +"\nX_NEST: " + X_NEST
+                         +"\nY_NEST: " + Y_NEST
+                         +"\nX_FOOD: " + X_FOOD
+                         +"\nY_FOOD: " + Y_FOOD
+                         +"\nMEAN_TIME: " + MEAN_TIME
+                         );
+            }
+            catch(IOException e){}
+
             schedule.scheduleRepeating(schedule.EPOCH,2, new Steppable(){
                     public void step (SimState state)
                     {
