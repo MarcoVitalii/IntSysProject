@@ -12,10 +12,12 @@ public class Beacon extends OvalPortrayal2D implements Steppable
     public int wanderingPheromone = 0;
     public Stoppable stopper = null;
     public Double2D pos = new Double2D(0.0,0.0);
+    public double range;
 
-    Beacon(Double2D newPos)
+    Beacon(Double2D newPos, Double newRange)
     {
         pos = newPos;
+        range = newRange;
     }
     //public int neighborsCount = 0;
 

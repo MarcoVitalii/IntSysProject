@@ -322,7 +322,7 @@ public class Ant implements Steppable
 
     public void deploy(ForagingWithBeacons state)
     {
-        Beacon b = new Beacon(whereToDeploy);
+        Beacon b = new Beacon(whereToDeploy, state.range);
         state.beaconsPos.setObjectLocation(b,whereToDeploy);
         state.antsPos.setObjectLocation(this, whereToDeploy);
         b.stopper = state.schedule.scheduleRepeating(state.schedule.getTime()+0.5,b);
