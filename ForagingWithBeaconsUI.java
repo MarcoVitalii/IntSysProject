@@ -62,7 +62,9 @@ public class ForagingWithBeaconsUI extends GUIState
                 public void draw( Object object,Graphics2D graphics,DrawInfo2D info)
                 {
                     Beacon beacon = (Beacon) object;
-                    paint = new Color(20,Math.min(255,(int)(beacon.foragingPheromone/2*255)),20);
+                    if (beacon.foragingPheromone == 0.0 ) paint = Color.red;
+                    else
+                        paint = new Color(20,Math.min(255,(int)(beacon.foragingPheromone/2*255)),20);
                     super.draw(object, graphics, info);
                 }
             },0,fwb.range*2, Color.black, false)
@@ -70,7 +72,9 @@ public class ForagingWithBeaconsUI extends GUIState
                 public void draw( Object object,Graphics2D graphics,DrawInfo2D info)
                 {
                     Beacon beacon = (Beacon) object;
-                    paint = new Color(20,20,Math.min(255,(int)(beacon.ferryingPheromone/2*255)));
+                    if (beacon.ferryingPheromone == 0.0 ) paint = Color.red;
+                    else
+                        paint = new Color(20,20,Math.min(255,(int)(beacon.ferryingPheromone/2*255)));
                     super.draw(object, graphics, info);
                 }
             });
