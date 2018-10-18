@@ -11,6 +11,12 @@ public class Beacon extends OvalPortrayal2D implements Steppable
     public double ferryingPheromone = 0.0;
     public int wanderingPheromone = 0;
     public Stoppable stopper = null;
+    public Double2D pos = new Double2D(0.0,0.0);
+
+    Beacon(Double2D newPos)
+    {
+        pos = newPos;
+    }
     //public int neighborsCount = 0;
 
     //getters are needed to inspect the elements inside the visualization

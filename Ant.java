@@ -323,7 +323,7 @@ public class Ant implements Steppable
 
     public void deploy(ForagingWithBeacons state)
     {
-        Beacon b = new Beacon();
+        Beacon b = new Beacon(whereToDeploy);
         //System.out.println("where: "+whereToDeploy);
         state.beaconsPos.setObjectLocation(b,whereToDeploy);
         state.antsPos.setObjectLocation(this, whereToDeploy);
@@ -400,6 +400,7 @@ public class Ant implements Steppable
     public void move(ForagingWithBeacons state)
     {
         state.beaconsPos.setObjectLocation(currBeacon, whereToDeploy);
+        currBeacon.pos = whereToDeploy;
         state.antsPos.setObjectLocation(this,whereToDeploy);
         currPos = whereToDeploy;
     }

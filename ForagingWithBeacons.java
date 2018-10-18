@@ -71,7 +71,7 @@ public class ForagingWithBeacons extends SimState
             double spacing = WORLD_SIZE / (grid_density + 1);
             for (int x = 1; x <= grid_density; x++){
                 for (int y = 1; y <= grid_density; y++){
-                    Beacon b = new Beacon();
+                    Beacon b = new Beacon(new Double2D(spacing *x , spacing * y));
                     beaconsPos.setObjectLocation(b,
                                                  new Double2D(spacing * x,
                                                               spacing * y));
