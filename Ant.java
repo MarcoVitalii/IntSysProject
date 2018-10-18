@@ -82,7 +82,6 @@ public class Ant implements Steppable
             Nest nest = (Nest) nestInRange.objs[0];
             nest.meanTravelLength = (double)(nest.meanTravelLength * nest.foodRecovered + travelLength)/ (++nest.foodRecovered); 
             travelLength = 0;
-            //nest.foodRecovered += 1;
             if(printStatus) System.out.println("nest Reached.");
         }
         else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)
@@ -96,7 +95,7 @@ public class Ant implements Steppable
                 next = (Beacon) neighbors.get(fwb.random.nextInt(neighbors.size()));
                 if (next != currBeacon) break;
             }
-            currPos = beaconsPos.getObjectLocation(next);
+            currPos = next.pos;
             antsPos.setObjectLocation(this, currPos);
             count -= 1;
             if(printStatus) System.out.println("Exploring. "+count+" turns left.");
@@ -119,7 +118,7 @@ public class Ant implements Steppable
         //else if (canDeploy(fwb) && fwb.random.nextDouble() < fwb.pDeploy){
         else if (canDeploy(fwb) && fwb.random.nextDouble() < Math.exp(-fwb.beaconsPos.size()/fwb.MAX_BEACON_NUMBER)){
             deploy(fwb);
-            if(printStatus) System.out.println("deployed the beacon "+currBeacon );
+            if(printStatus) System.out.println("deployed the beacon " + currBeacon);
         }
         else if (hasBeacon){
             currPos = follow(fwb, beaconsPos, wandering, fwb.range);
@@ -146,7 +145,7 @@ public class Ant implements Steppable
         hasBeacon = currBeacon != null;
         if (hasBeacon){
             neighbors = beaconsPos.getNeighborsExactlyWithinDistance(currPos,
-                                                                      fwb.range);
+                                                                     fwb.range);
             updatePheromones(neighbors);
         }
         reward = 0;
@@ -158,11 +157,11 @@ public class Ant implements Steppable
         Bag candidates = state.beaconsPos.getNeighborsExactlyWithinDistance(currPos,range);
         if (candidates.size() == 0) return null;
         Beacon closest = (Beacon) candidates.objs[0];
-        double distance = state.beaconsPos.getObjectLocation(closest).distance(currPos);
+        double distance = closest.pos.distance(currPos);
         int breakties = 1;
         for (int el = 1; el < candidates.size(); el++){
             Beacon b = (Beacon) candidates.get(el);
-            double newDistance = state.beaconsPos.getObjectLocation(b).distance(currPos);
+            double newDistance = b.pos.distance(currPos);
             if ( newDistance > distance) continue;
             if (newDistance == distance )
                 if (state.random.nextDouble() > 1. / (++breakties)) continue;
@@ -267,7 +266,7 @@ public class Ant implements Steppable
                 if (fwb.random.nextDouble() > (1.0 / ++tieBreak)) continue;
             if (max != val) tieBreak = 1;
             max = val;
-            nextPos = beaconsPos.getObjectLocation(cand);
+            nextPos = cand.pos;
         }
         return nextPos;
     }
@@ -293,7 +292,7 @@ public class Ant implements Steppable
 
                 //PROBLEM TO DISCUSS: this leads to deploy a beacon out of reach.
                 if (currBeacon != null){
-                    whereToDeploy = whereToDeploy.add(beaconsPos.getObjectLocation(currBeacon));
+                    whereToDeploy = whereToDeploy.add(currBeacon.pos);
                 }
                 else {
                     whereToDeploy = whereToDeploy.add(currPos);
@@ -311,7 +310,7 @@ public class Ant implements Steppable
             Bag closestBeacon = beaconsPos.getNeighborsExactlyWithinDistance(whereToDeploy, state.range);
             boolean goodSpot = true;
             for ( int j = 0; j < closestBeacon.size(); j++){
-                if (beaconsPos.getObjectLocation(closestBeacon.objs[j]).distance(whereToDeploy) < DEPLOY_CROWD * state.range){
+                if (((Beacon)closestBeacon.objs[j]).pos.distance(whereToDeploy) < DEPLOY_CROWD * state.range){
                     goodSpot = false;
                     break;
                 }
@@ -324,10 +323,8 @@ public class Ant implements Steppable
     public void deploy(ForagingWithBeacons state)
     {
         Beacon b = new Beacon(whereToDeploy);
-        //System.out.println("where: "+whereToDeploy);
         state.beaconsPos.setObjectLocation(b,whereToDeploy);
         state.antsPos.setObjectLocation(this, whereToDeploy);
-        //b.stopper = state.schedule.scheduleRepeating(b,1);
         b.stopper = state.schedule.scheduleRepeating(state.schedule.getTime()+0.5,b);
         currBeacon = b;
         currPos = whereToDeploy;
@@ -335,7 +332,7 @@ public class Ant implements Steppable
 
     public boolean canMove(ForagingWithBeacons state, boolean closeToFood, boolean closeToNest)
     {
-        Bag neighbors = state.beaconsPos.getNeighborsExactlyWithinDistance(state.beaconsPos.getObjectLocation(currBeacon),state.range);
+        Bag neighbors = state.beaconsPos.getNeighborsExactlyWithinDistance(currBeacon.pos,state.range);
         Double2D ferryPos = currPos;
         Double2D foragePos = currPos;
         Double ferrymax = -1.0;
@@ -348,25 +345,25 @@ public class Ant implements Steppable
             Beacon obj = (Beacon) neighbors.objs[i];
             if (obj.foragingPheromone > foragemax) {
                 foragemax = obj.foragingPheromone;
-                foragePos = state.beaconsPos.getObjectLocation(obj);
+                foragePos = obj.pos;
                 tiebreak1 = 1;
                 wander1 = obj.wanderingPheromone;
             }
             else if (obj.foragingPheromone == foragemax) {
                 if (state.random.nextDouble() < 1.0 / (++tiebreak1)){
-                    foragePos = state.beaconsPos.getObjectLocation(obj);
+                    foragePos = obj.pos;
                     wander1 = obj.wanderingPheromone;
                 }
             }
             if (obj.ferryingPheromone > ferrymax) {
                 ferrymax = obj.ferryingPheromone;
-                ferryPos = state.beaconsPos.getObjectLocation(obj);
+                ferryPos = obj.pos;
                 wander2 = obj.wanderingPheromone;
                 tiebreak2 = 1;
             }
             else if (obj.ferryingPheromone == ferrymax) {
                 if (state.random.nextDouble() < 1.0 / (++tiebreak2)){
-                    ferryPos = state.beaconsPos.getObjectLocation(obj);
+                    ferryPos = obj.pos;
                     wander2 = obj.wanderingPheromone;
                 }
             }
@@ -391,7 +388,7 @@ public class Ant implements Steppable
             Beacon b = (Beacon) neighbors.objs[i];
             if (b == currBeacon) continue;
             if (b.wanderingPheromone < WANDER_FRACTION * W){
-                if (state.beaconsPos.getObjectLocation(b).distance(whereToDeploy) > state.range) return false;
+                if (b.pos.distance(whereToDeploy) > state.range) return false;
             }
         }
         //Without obstacles the checks are finished.
@@ -417,22 +414,21 @@ public class Ant implements Steppable
                 //System.out.println("killed by neighborhood");
                 return true;
             }
-        // System.out.println("butcher at "+currPos+" with beaocon "+ state.beaconsPos.getObjectLocation(currBeacon));
+        // System.out.println("butcher at "+currPos+" with beacon "+ currBeacon.pos);
         for (int i = 0; i< neighbors.numObjs; i++){
             if (neighbors.objs[i] == currBeacon) continue;
-            Double2D pos = state.beaconsPos.getObjectLocation(neighbors.objs[i]);
             Beacon other = (Beacon) neighbors.objs[i];
             // System.out.println("Candidate for merger at "+pos);
             if (foodWithinRange == true &&
-                state.foodPos.getNeighborsExactlyWithinDistance(pos,state.range).size() == 0 ) continue;
+                state.foodPos.getNeighborsExactlyWithinDistance(other.pos,state.range).size() == 0 ) continue;
             if (nestWithinRange == true &&
-                state.nestPos.getNeighborsExactlyWithinDistance(pos,state.range).size() == 0 ) continue;
+                state.nestPos.getNeighborsExactlyWithinDistance(other.pos,state.range).size() == 0 ) continue;
             if (currBeacon.ferryingPheromone > other.ferryingPheromone) continue;
             if (currBeacon.foragingPheromone > other.foragingPheromone) continue;
             boolean goodBeacon = true;
             for (int j = 0; j< neighbors.numObjs;j++){
                 if (i==j) continue;
-                if (state.beaconsPos.getObjectLocation(neighbors.objs[j]).distance(pos)>= state.range) {
+                if (((Beacon)(neighbors.objs[j])).pos.distance(other.pos)>= state.range) {
                     goodBeacon = false;
                     break;
                 }
