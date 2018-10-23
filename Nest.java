@@ -10,10 +10,12 @@ public class Nest implements Steppable
     public double meanFoodRecovered;
     public double foodIncomingRate;
     public double meanTravelLength;
+    public double skewedAvgLength;
     public int getFoodRecovered() {return foodRecovered;}
     public double getMeanFoodRecovered () {return meanFoodRecovered;}
     public double getfoodIncomingRate () {return foodIncomingRate;}
     public double getMeanTravelLength () {return meanTravelLength;}
+    public double getSkewedAvgLength () {return skewedAvgLength;}
     
 
     public Nest()

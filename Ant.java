@@ -82,6 +82,7 @@ public class Ant implements Steppable
             ferrying = false;
             Nest nest = (Nest) nestInRange.objs[0];
             nest.meanTravelLength = (double)(nest.meanTravelLength * nest.foodRecovered + travelLength)/ (++nest.foodRecovered); 
+            nest.skewedAvgLength = nest.skewedAvgLength + 0.01 * (travelLength - nest.skewedAvgLength);
             travelLength = 0;
             if(printStatus) System.out.println("nest Reached.");
         }

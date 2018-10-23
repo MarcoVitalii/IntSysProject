@@ -13,8 +13,8 @@ public class Beacon extends OvalPortrayal2D implements Steppable
     public Stoppable stopper = null;
     public Double2D pos = new Double2D(0.0,0.0);
     public double range;
-    public static final double shrinkingFactor = 0.999;
-    public static final double minRange = 2.0;
+    public static final double shrinkingFactor = 0.995;
+    public static final double minRange = 5.0;
 
     Beacon(Double2D newPos, Double newRange)
     {

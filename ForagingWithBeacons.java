@@ -22,7 +22,7 @@ public class ForagingWithBeacons extends SimState
     double range = 10.0;
     int antsNumber = 100;
     double reward = 1.0;
-    double pExplore = 0.001;
+    double pExplore = 0.1;
     double pFollow = 0.95;
     double pDeploy = 0.5;
     double pMove = 0.1;
