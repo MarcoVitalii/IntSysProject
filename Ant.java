@@ -51,7 +51,7 @@ public class Ant implements Steppable
         currPos = antsPos.getObjectLocation(this);
         currBeacon = findCurrBeacon(fwb, currPos, fwb.range);
         //neighbors are needed in several functions so they are computed here once
-        Bag neighbors = beaconsPos.getNeighborsExactlyWithinDistance(currPos, fwb.range);
+        Bag neighbors = getBeaconsInRange(currPos,fwb);
 
         // this implementation of finding the food or nest within range allows
         // to compute later their position to move the ant
@@ -60,6 +60,7 @@ public class Ant implements Steppable
         boolean hasBeacon = currBeacon != null;
         boolean hasFoodInRange = foodInRange.size() > 0;
         boolean hasNestInRange = nestInRange.size() > 0;
+
 
 
         //System.out.print("ant "+this+ ": ");
@@ -109,7 +110,7 @@ public class Ant implements Steppable
             move(fwb);
             if(printStatus) System.out.println("Moved beacon "+currBeacon);
         }
-        else if (hasBeacon && canFollow(beaconsPos, fwb.range) &&
+        else if (hasBeacon && canFollow(fwb) &&
                  fwb.random.nextDouble() < fwb.pFollow){
             currPos = follow(fwb, beaconsPos, !wandering, fwb.range);
             antsPos.setObjectLocation(this, currPos);
@@ -144,8 +145,7 @@ public class Ant implements Steppable
         currBeacon = findCurrBeacon(fwb, currPos, fwb.range);
         hasBeacon = currBeacon != null;
         if (hasBeacon){
-            neighbors = beaconsPos.getNeighborsExactlyWithinDistance(currPos,
-                                                                     fwb.range);
+            neighbors = getBeaconsInRange(currPos, fwb);
             updatePheromones(neighbors);
         }
         reward = 0;
@@ -154,7 +154,7 @@ public class Ant implements Steppable
 
     public Beacon findCurrBeacon(ForagingWithBeacons state, Double2D currPos, double range)
     {
-        Bag candidates = state.beaconsPos.getNeighborsExactlyWithinDistance(currPos,range);
+        Bag candidates = getBeaconsInRange(currPos, state);
         if (candidates.size() == 0) return null;
         Beacon closest = (Beacon) candidates.objs[0];
         double distance = closest.pos.distance(currPos);
@@ -209,9 +209,9 @@ public class Ant implements Steppable
     }
 
 
-    public boolean canFollow(Continuous2D beaconsPos, double range)
+    public boolean canFollow(ForagingWithBeacons fwb)
     {
-        Bag candidates = beaconsPos.getNeighborsExactlyWithinDistance(currPos, range);
+        Bag candidates = getBeaconsInRange(currBeacon.pos, fwb);
         int len = candidates.size();
         double max = -1;
         for (int i = 0; i < len; i++){
@@ -241,7 +241,7 @@ public class Ant implements Steppable
 
     public Double2D follow(ForagingWithBeacons fwb, Continuous2D beaconsPos, boolean wandering, double range)
     {
-        Bag candidates = beaconsPos.getNeighborsExactlyWithinDistance(currPos, range);
+        Bag candidates = getBeaconsInRange(currBeacon.pos, fwb);
         //max is unreasonably high to be discarded even if wandering as negative numbers are used
         double max = -1e40;
         int tieBreak = 1;
@@ -282,22 +282,26 @@ public class Ant implements Steppable
         */
         for (int i = 0; i < DEPLOY_TRIES; i++){
             while (true){
+                //PROBLEM TO DISCUSS: this leads to deploy a beacon out of reach.
+                double correctRange = state.range;
+                if (currBeacon != null){
+                    whereToDeploy = currBeacon.pos;
+                    //This is added to propagate pheromones, if state.range is used
+                    //the current beacon might get out of range once the ants move.
+                    correctRange = currBeacon.range;
+                }
+                else {
+                    whereToDeploy = currPos;
+                }
+                //whereToDeploy = whereToDeploy.add(currPos);
                 double r = (state.random.nextDouble() *
                             (DEPLOY_RANGE - DEPLOY_CROWD) + DEPLOY_CROWD)
-                           * state.range;
+                           * correctRange;
                 double theta = state.random.nextDouble() * Math.PI *2;
                 double x = r * Math.cos(theta);
                 double y = r * Math.sin(theta);
-                this.whereToDeploy = new Double2D(x,y);
+                whereToDeploy = whereToDeploy.add(new Double2D(x,y));
 
-                //PROBLEM TO DISCUSS: this leads to deploy a beacon out of reach.
-                if (currBeacon != null){
-                    whereToDeploy = whereToDeploy.add(currBeacon.pos);
-                }
-                else {
-                    whereToDeploy = whereToDeploy.add(currPos);
-                }
-                //whereToDeploy = whereToDeploy.add(currPos);
 
                 if ( whereToDeploy.x >= 0 &&
                      whereToDeploy.x <= state.WORLD_SIZE &&
@@ -309,8 +313,10 @@ public class Ant implements Steppable
             if (beaconsPos.size() ==0) return true;
             Bag closestBeacon = beaconsPos.getNeighborsExactlyWithinDistance(whereToDeploy, state.range);
             boolean goodSpot = true;
+            //Sloppy density definition required to be able to deploy beacons in correctRange
             for ( int j = 0; j < closestBeacon.size(); j++){
-                if (((Beacon)closestBeacon.objs[j]).pos.distance(whereToDeploy) < DEPLOY_CROWD * state.range){
+                Beacon other = (Beacon) closestBeacon.objs[j];
+                if (other.pos.distance(whereToDeploy) < DEPLOY_CROWD * other.range){
                     goodSpot = false;
                     break;
                 }
@@ -332,7 +338,7 @@ public class Ant implements Steppable
 
     public boolean canMove(ForagingWithBeacons state, boolean closeToFood, boolean closeToNest)
     {
-        Bag neighbors = state.beaconsPos.getNeighborsExactlyWithinDistance(currBeacon.pos,state.range);
+        Bag neighbors = getBeaconsInRange(currBeacon.pos, state);
         Double2D ferryPos = currPos;
         Double2D foragePos = currPos;
         Double ferrymax = -1.0;
@@ -411,14 +417,11 @@ public class Ant implements Steppable
             nestWithinRange == false &&
             currBeacon.wanderingPheromone <= MIN_WANDER)
             {
-                //System.out.println("killed by neighborhood");
                 return true;
             }
-        // System.out.println("butcher at "+currPos+" with beacon "+ currBeacon.pos);
         for (int i = 0; i< neighbors.numObjs; i++){
             if (neighbors.objs[i] == currBeacon) continue;
             Beacon other = (Beacon) neighbors.objs[i];
-            // System.out.println("Candidate for merger at "+pos);
             if (foodWithinRange == true &&
                 state.foodPos.getNeighborsExactlyWithinDistance(other.pos,state.range).size() == 0 ) continue;
             if (nestWithinRange == true &&
@@ -428,7 +431,7 @@ public class Ant implements Steppable
             boolean goodBeacon = true;
             for (int j = 0; j< neighbors.numObjs;j++){
                 if (i==j) continue;
-                if (((Beacon)(neighbors.objs[j])).pos.distance(other.pos)>= state.range) {
+                if (((Beacon)(neighbors.objs[j])).pos.distance(other.pos)>= ((Beacon)neighbors.objs[j]).range) {
                     goodBeacon = false;
                     break;
                 }
@@ -453,5 +456,19 @@ public class Ant implements Steppable
         beaconsPos.remove(currBeacon);
         currBeacon.stopper.stop();
         currBeacon = null;
+    }
+
+    public Bag getBeaconsInRange(Double2D pos, ForagingWithBeacons state)
+    {
+        Bag candidates = state.beaconsPos.getNeighborsExactlyWithinDistance(pos, state.range);
+        for (int i = 0 ; i < candidates.size(); i++){
+            Beacon el = (Beacon)candidates.get(i);
+            if ( el.pos.distance(pos) > el.range){
+                candidates.remove(i);
+                --i;
+            }
+        }
+
+        return candidates;
     }
 }

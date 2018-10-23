@@ -72,6 +72,7 @@ public class ForagingWithBeaconsUI extends GUIState
                 public void draw( Object object,Graphics2D graphics,DrawInfo2D info)
                 {
                     Beacon beacon = (Beacon) object;
+                    scale = beacon.range * 2;
                     if (beacon.ferryingPheromone == 0.0 ) paint = Color.red;
                     else
                         paint = new Color(20,20,Math.min(255,(int)(beacon.ferryingPheromone/2*255)));

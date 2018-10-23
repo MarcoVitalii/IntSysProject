@@ -13,6 +13,8 @@ public class Beacon extends OvalPortrayal2D implements Steppable
     public Stoppable stopper = null;
     public Double2D pos = new Double2D(0.0,0.0);
     public double range;
+    public static final double shrinkingFactor = 0.999;
+    public static final double minRange = 2.0;
 
     Beacon(Double2D newPos, Double newRange)
     {
@@ -25,6 +27,7 @@ public class Beacon extends OvalPortrayal2D implements Steppable
     public double getForagingPheromone() {return foragingPheromone;}
     public double getFerryingPheromone() {return ferryingPheromone;}
     public int getWanderingPheromone() {return wanderingPheromone;}
+    public double getRange() {return range;}
     //public int getNeighborsCount() {return neighborsCount;}
     //public void setFerryingPheromone(double ferry) {if(ferry >0) ferryingPheromone = ferry;}
     //public void setForagingPheromone(double forag) { if (forag >0) foragingPheromone = 0.0;}
@@ -38,6 +41,11 @@ public class Beacon extends OvalPortrayal2D implements Steppable
         double beta = fwb.evaporationConstant;
         foragingPheromone *= beta;
         ferryingPheromone *= beta;
+        range *= shrinkingFactor;
+        if (range < minRange){
+            stopper.stop();
+            fwb.beaconsPos.remove(this);
+        }
         //neighborsCount = fwb.beaconsPos.getNeighborsExactlyWithinDistance(fwb.beaconsPos.getObjectLocation(this),fwb.range).size()-1;
 
     }
