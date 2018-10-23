@@ -394,7 +394,7 @@ public class Ant implements Steppable
             Beacon b = (Beacon) neighbors.objs[i];
             if (b == currBeacon) continue;
             if (b.wanderingPheromone < WANDER_FRACTION * W){
-                if (b.pos.distance(whereToDeploy) > state.range) return false;
+                if (b.pos.distance(whereToDeploy) > currBeacon.range) return false;
             }
         }
         //Without obstacles the checks are finished.
@@ -431,7 +431,7 @@ public class Ant implements Steppable
             boolean goodBeacon = true;
             for (int j = 0; j< neighbors.numObjs;j++){
                 if (i==j) continue;
-                if (((Beacon)(neighbors.objs[j])).pos.distance(other.pos)>= ((Beacon)neighbors.objs[j]).range) {
+                if (((Beacon)(neighbors.objs[j])).pos.distance(other.pos)>= Math.min(((Beacon)neighbors.objs[j]).range,currBeacon.range)) {
                     goodBeacon = false;
                     break;
                 }
@@ -461,9 +461,12 @@ public class Ant implements Steppable
     public Bag getBeaconsInRange(Double2D pos, ForagingWithBeacons state)
     {
         Bag candidates = state.beaconsPos.getNeighborsExactlyWithinDistance(pos, state.range);
+        double currRange;
+        if (currBeacon == null) currRange = state.range;
+        else currRange = currBeacon.range;
         for (int i = 0 ; i < candidates.size(); i++){
             Beacon el = (Beacon)candidates.get(i);
-            if ( el.pos.distance(pos) > el.range){
+            if ( el.pos.distance(pos) > Math.min(el.range,currRange)){
                 candidates.remove(i);
                 --i;
             }
