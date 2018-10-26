@@ -5,6 +5,7 @@ import sim.portrayal.*;
 import sim.portrayal.simple.*;
 import java.awt.*;
 import sim.util.*;
+import sim.util.distribution.Normal;
 public class Beacon extends OvalPortrayal2D implements Steppable
 {
     public double foragingPheromone = 0.0;
@@ -44,9 +45,17 @@ public class Beacon extends OvalPortrayal2D implements Steppable
         if (range < minRange){
             stopper.stop();
             fwb.beaconsPos.remove(this);
-        }
-        //neighborsCount = fwb.beaconsPos.getNeighborsExactlyWithinDistance(fwb.beaconsPos.getObjectLocation(this),fwb.range).size()-1;
-
+        } else{
+		Double2D newPos; 
+		while (true){
+			newPos  =  pos.add(new Double2D(fwb.random.nextGaussian() * fwb.beaconSigma, fwb.random.nextGaussian() * fwb.beaconSigma));
+			if (newPos.x >= 0 && newPos.x < fwb.WORLD_SIZE &&
+		   	 newPos.y >= 0 && newPos.y < fwb.WORLD_SIZE)
+		    	break;
+		}
+		pos = newPos;
+		fwb.beaconsPos.setObjectLocation(this, pos);
+	}
     }
 
     /* Nicer option than what's actually happening with anonymus classes inside

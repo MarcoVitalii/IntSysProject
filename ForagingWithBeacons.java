@@ -30,6 +30,8 @@ public class ForagingWithBeacons extends SimState
     double beaconShrinkingFactor = 0.995;
     public double evaporationConstant = 0.95;
     public final boolean fixedBeacons = false;
+    double[] actionsTaken = new double[10];
+    public double[] getActionsTaken () {return actionsTaken;}
     public double getRange(){return range;}
     public void setRange(double newRange){if (newRange >0) range = newRange;}
     public int getAntsNumber(){return antsNumber;}
@@ -53,8 +55,15 @@ public class ForagingWithBeacons extends SimState
     public Object domPMove () { return new sim.util.Interval(0.0,1.0);}
     public double getPMove(){return pMove;}
     public void setPMove(double newP) {if (newP >=0 && newP <=1) pMove = newP;}
+    double beaconSigma = 0;
+    public double getBeaconSigma () {return beaconSigma;}
+    public void setBeaconSigma (double bs) { if (bs >= 0 && bs <= range ) beaconSigma = bs;}
+    public Object domBeaconSigma () { return new sim.util.Interval(0.0,range);}
 
-
+    double foodSigma = 0.0;
+    public double getFoodSigma () {return foodSigma;}
+    public void setFoodSigma (double fs) { if (fs >= 0 && fs <= range ) foodSigma = fs;}
+    public Object domFoodSigma () { return new sim.util.Interval(0.0,range);}
     public int getBeaconsNumber(){return beaconsPos.size();}
 
 
@@ -94,7 +103,9 @@ public class ForagingWithBeacons extends SimState
         Nest nest = new Nest();
         nestPos.setObjectLocation(nest, new Double2D(X_NEST, Y_NEST));
         schedule.scheduleRepeating(schedule.EPOCH, 1, nest, MEAN_TIME);
-        foodPos.setObjectLocation(new Food(), new Double2D(X_FOOD, Y_FOOD));
+	Food food = new Food();
+        foodPos.setObjectLocation(food, new Double2D(X_FOOD, Y_FOOD));
+	schedule.scheduleRepeating(schedule.EPOCH, 1, food);
         //New part to create data files that logs performances
         if (PRINT_ON_FILE){
             try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/settings.txt"))){

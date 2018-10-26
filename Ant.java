@@ -24,6 +24,18 @@ public class Ant implements Steppable
     public void setPrintStatus (boolean newStatus) {printStatus = newStatus;}
     //variables for statistic purposes
     int travelLength = 0;
+    //Used to get a histogram of actions taken by ants
+    //0: get food
+    //1: get home
+    //2: remove beacon
+    //3: exploration
+    //4: started exploration
+    //5: move
+    //6: follow
+    //7: deploy beacon
+    //8: wandering 
+    //9: random move beaconless
+    int actionTaken = 0;
     //values needed to compute values inside methods that are not returned by
     //boolean functions
     //eventualMerge is needed to remove Beacons and pass a value to remove
@@ -74,6 +86,7 @@ public class Ant implements Steppable
             foraging = false;
             ferrying = true;
             if(printStatus) System.out.println("Food Reached.");
+	    actionTaken = 0;
         }
         else if (hasNestInRange && ferrying){
             antsPos.setObjectLocation(this, fwb.nestPos.getObjectLocation(nestInRange.get(0)));
@@ -85,11 +98,13 @@ public class Ant implements Steppable
             nest.skewedAvgLength = nest.skewedAvgLength + 0.01 * (travelLength - nest.skewedAvgLength);
             travelLength = 0;
             if(printStatus) System.out.println("nest Reached.");
+	    actionTaken = 1;
         }
         else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)
                  && fwb.random.nextDouble() <= Math.pow((-localityCount+tau)/tau,0.5)){
             if(printStatus) System.out.println("removed beacon "+currBeacon);
             remove(beaconsPos);
+	    actionTaken = 2;
         }
         else if (count > 0 && hasBeacon && (neighbors.size() > 1) ){
             Beacon next;
@@ -101,31 +116,37 @@ public class Ant implements Steppable
             antsPos.setObjectLocation(this, currPos);
             count -= 1;
             if(printStatus) System.out.println("Exploring. "+count+" turns left.");
+	    actionTaken = 3;
         }
         else if (fwb.random.nextDouble() < fwb.pExplore){
             count = fwb.countMax;
             if(printStatus) System.out.println("Started exploration");
+	    actionTaken = 4;
         }
         else if (hasBeacon && canMove(fwb, hasFoodInRange, hasNestInRange) &&
                  fwb.random.nextDouble() < fwb.pMove){
             move(fwb);
             if(printStatus) System.out.println("Moved beacon "+currBeacon);
+	    actionTaken = 5;
         }
         else if (hasBeacon && canFollow(fwb) &&
                  fwb.random.nextDouble() < fwb.pFollow){
             currPos = follow(fwb, beaconsPos, !wandering, fwb.range);
             antsPos.setObjectLocation(this, currPos);
             if(printStatus) System.out.println("followed pheromone");
+	    actionTaken = 6;
         }
         //else if (canDeploy(fwb) && fwb.random.nextDouble() < fwb.pDeploy){
         else if (canDeploy(fwb) && fwb.random.nextDouble() < Math.exp(-fwb.beaconsPos.size()/fwb.MAX_BEACON_NUMBER)){
             deploy(fwb);
             if(printStatus) System.out.println("deployed the beacon " + currBeacon);
+	    actionTaken = 7;
         }
         else if (hasBeacon){
             currPos = follow(fwb, beaconsPos, wandering, fwb.range);
             antsPos.setObjectLocation(this, currPos);
             if(printStatus) System.out.println("wandering. Num beacons "+fwb.beaconsPos.size()+"/"+fwb.MAX_BEACON_NUMBER);
+	    actionTaken = 8;
         }
         else{
             Double2D rndMove;
@@ -142,6 +163,7 @@ public class Ant implements Steppable
             antsPos.setObjectLocation(this,rndMove);
             currPos = rndMove;
             if(printStatus) System.out.println("beaconless random move");
+	    actionTaken = 9;
         }
         currBeacon = findCurrBeacon(fwb, currPos, fwb.range);
         hasBeacon = currBeacon != null;
@@ -150,6 +172,9 @@ public class Ant implements Steppable
             updatePheromones(neighbors);
         }
         reward = 0;
+ 
+	fwb.actionsTaken[actionTaken] += 1; 
+
 
     }
 
