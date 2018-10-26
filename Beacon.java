@@ -13,7 +13,6 @@ public class Beacon extends OvalPortrayal2D implements Steppable
     public Stoppable stopper = null;
     public Double2D pos = new Double2D(0.0,0.0);
     public double range;
-    public static final double shrinkingFactor = 0.995;
     public static final double minRange = 5.0;
 
     Beacon(Double2D newPos, Double newRange)
@@ -41,7 +40,7 @@ public class Beacon extends OvalPortrayal2D implements Steppable
         double beta = fwb.evaporationConstant;
         foragingPheromone *= beta;
         ferryingPheromone *= beta;
-        range *= shrinkingFactor;
+        range *= fwb.beaconShrinkingFactor;
         if (range < minRange){
             stopper.stop();
             fwb.beaconsPos.remove(this);

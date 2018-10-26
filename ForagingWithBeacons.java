@@ -27,6 +27,7 @@ public class ForagingWithBeacons extends SimState
     double pDeploy = 0.5;
     double pMove = 0.1;
     int countMax = 5;
+    double beaconShrinkingFactor = 0.995;
     public double evaporationConstant = 0.95;
     public final boolean fixedBeacons = false;
     public double getRange(){return range;}
@@ -45,6 +46,10 @@ public class ForagingWithBeacons extends SimState
     //public double getPDeploy(){return pDeploy;}
     //public void setPDeploy(double newConst){if (newConst >=0 && newConst <=1 ) pDeploy = newConst;}
     //public Object domPDeploy () { return new sim.util.Interval(0.0,1.0);}
+    public Object domPDeploy () { return new sim.util.Interval(0.0,1.0);}
+    public Object domBeaconShrinkingFactor () { return new sim.util.Interval(0.0,1.0);}
+    public double getBeaconShrinkingFactor () { return beaconShrinkingFactor;}
+    public void setBeaconShrinkingFactor(double newFactor) {if (newFactor <= 1 && newFactor >0) beaconShrinkingFactor = newFactor;}
     public Object domPMove () { return new sim.util.Interval(0.0,1.0);}
     public double getPMove(){return pMove;}
     public void setPMove(double newP) {if (newP >=0 && newP <=1) pMove = newP;}
@@ -118,7 +123,7 @@ public class ForagingWithBeacons extends SimState
                         ForagingWithBeacons fwb = (ForagingWithBeacons) state;
                         Nest nest =(Nest)(fwb.nestPos.getAllObjects().get(0));
                         try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/"+seed()+".csv",true))){
-                            bw.write(fwb.schedule.time()+","+nest.foodIncomingRate+","+fwb.beaconsPos.size()+","+nest.meanTravelLength+"\n");
+                            bw.write(fwb.schedule.time()+","+nest.foodIncomingRate+","+fwb.beaconsPos.size()+","+nest.skewedAvgLength+"\n");
                         }
                         catch(IOException e){}
                     }
