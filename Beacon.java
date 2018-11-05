@@ -14,7 +14,6 @@ public class Beacon extends OvalPortrayal2D implements Steppable
     public Stoppable stopper = null;
     public Double2D pos = new Double2D(0.0,0.0);
     public double range;
-    public static final double minRange = 5.0;
 
     Beacon(Double2D newPos, Double newRange)
     {
@@ -42,20 +41,23 @@ public class Beacon extends OvalPortrayal2D implements Steppable
         foragingPheromone *= beta;
         ferryingPheromone *= beta;
         range *= fwb.beaconShrinkingFactor;
-        if (range < minRange){
+        if (range < fwb.minRange){
             stopper.stop();
             fwb.beaconsPos.remove(this);
-        } else{
-		Double2D newPos; 
-		while (true){
-			newPos  =  pos.add(new Double2D(fwb.random.nextGaussian() * fwb.beaconSigma, fwb.random.nextGaussian() * fwb.beaconSigma));
-			if (newPos.x >= 0 && newPos.x < fwb.WORLD_SIZE &&
-		   	 newPos.y >= 0 && newPos.y < fwb.WORLD_SIZE)
-		    	break;
-		}
-		pos = newPos;
-		fwb.beaconsPos.setObjectLocation(this, pos);
-	}
+        }
+        /* feature excluded from current studies
+        else{
+            Double2D newPos;
+            while (true){
+                newPos  =  pos.add(new Double2D(fwb.random.nextGaussian() * fwb.beaconSigma, fwb.random.nextGaussian() * fwb.beaconSigma));
+                if (newPos.x >= 0 && newPos.x < fwb.WORLD_SIZE &&
+                    newPos.y >= 0 && newPos.y < fwb.WORLD_SIZE)
+                    break;
+            }
+            pos = newPos;
+            fwb.beaconsPos.setObjectLocation(this, pos);
+        }
+        */
     }
 
     /* Nicer option than what's actually happening with anonymus classes inside

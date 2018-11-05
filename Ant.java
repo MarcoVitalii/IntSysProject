@@ -4,7 +4,7 @@ import sim.util.*;
 
 public class Ant implements Steppable
 {
-    //variables for the model
+    //fixed parameters of the model
     final static double DEPLOY_RANGE = 0.9;
     final static double DEPLOY_CROWD = 0.6;
     final static int DEPLOY_TRIES = 10;
@@ -12,13 +12,23 @@ public class Ant implements Steppable
     final static double WANDER_FRACTION = 0.7;
     final static double discount = 0.9;
     final static boolean wandering = true;
+
+    //variables needed to run step(...) easily
     boolean foraging = true;
     boolean ferrying = false;
     double reward = 0.0;
     int count = 0;
     Double2D currPos;
     Beacon currBeacon;
+    Beacon eventualMerge = null;
+    Beacon localBeacon = null;
+    int localityCount = 0;
+    //whereToDeploy is needed to deal with move and deploy
+    //as canMove and canDeploy return a boolean and positions
+    //calculated there are needed in move and deploy
+    Double2D whereToDeploy = new Double2D(0,0);
 
+    //statistics variables
     boolean printStatus = false;
     public boolean getPrintStatus () {return printStatus;}
     public void setPrintStatus (boolean newStatus) {printStatus = newStatus;}
@@ -33,20 +43,14 @@ public class Ant implements Steppable
     //5: move
     //6: follow
     //7: deploy beacon
-    //8: wandering 
+    //8: wandering
     //9: random move beaconless
     int actionTaken = 0;
-    //values needed to compute values inside methods that are not returned by
-    //boolean functions
-    //eventualMerge is needed to remove Beacons and pass a value to remove
-    Beacon eventualMerge = null;
-    Beacon localBeacon = null;
-    int localityCount = 0;
+    int foodRecovered = 0;
+
+    //getters to see values inside the inspector from the console in the GUI version
     public int getLocalityCount() {return localityCount;}
     public Beacon getCurrentBeacon() {return currBeacon;}
-    double tau = 40;
-    //whereToDeploy is needed to pass a value to deploy()
-    Double2D whereToDeploy = new Double2D(0,0);
 
     public Ant(double start_reward)
     {
@@ -93,15 +97,14 @@ public class Ant implements Steppable
             reward = fwb.reward;
             foraging = true;
             ferrying = false;
-            Nest nest = (Nest) nestInRange.objs[0];
-            nest.meanTravelLength = (double)(nest.meanTravelLength * nest.foodRecovered + travelLength)/ (++nest.foodRecovered); 
-            nest.skewedAvgLength = nest.skewedAvgLength + 0.01 * (travelLength - nest.skewedAvgLength);
+            fwb.stats.updateStatsFromNest(travelLength);
             travelLength = 0;
+            ++foodRecovered;
             if(printStatus) System.out.println("nest Reached.");
 	    actionTaken = 1;
         }
         else if (hasBeacon && canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)
-                 && fwb.random.nextDouble() <= Math.pow((-localityCount+tau)/tau,0.5)){
+                 && fwb.random.nextDouble() <= Math.pow((-localityCount+fwb.tau)/fwb.tau,0.5)){
             if(printStatus) System.out.println("removed beacon "+currBeacon);
             remove(beaconsPos);
 	    actionTaken = 2;
@@ -137,7 +140,7 @@ public class Ant implements Steppable
 	    actionTaken = 6;
         }
         //else if (canDeploy(fwb) && fwb.random.nextDouble() < fwb.pDeploy){
-        else if (canDeploy(fwb) && fwb.random.nextDouble() < Math.exp(-fwb.beaconsPos.size()/fwb.MAX_BEACON_NUMBER)){
+        else if (canDeploy(fwb) && fwb.random.nextDouble() < Math.exp(-fwb.beaconsPos.size()/fwb.maxBeaconNumber)){
             deploy(fwb);
             if(printStatus) System.out.println("deployed the beacon " + currBeacon);
 	    actionTaken = 7;
@@ -145,7 +148,7 @@ public class Ant implements Steppable
         else if (hasBeacon){
             currPos = follow(fwb, beaconsPos, wandering, fwb.range);
             antsPos.setObjectLocation(this, currPos);
-            if(printStatus) System.out.println("wandering. Num beacons "+fwb.beaconsPos.size()+"/"+fwb.MAX_BEACON_NUMBER);
+            if(printStatus) System.out.println("wandering");
 	    actionTaken = 8;
         }
         else{
@@ -172,8 +175,8 @@ public class Ant implements Steppable
             updatePheromones(neighbors);
         }
         reward = 0;
- 
-	fwb.actionsTaken[actionTaken] += 1; 
+
+        fwb.stats.actionsTaken[actionTaken] += 1;
 
 
     }
@@ -300,12 +303,6 @@ public class Ant implements Steppable
     public boolean canDeploy(ForagingWithBeacons state)
     {
         Continuous2D beaconsPos = state.beaconsPos;
-        /* CHANGED BY USING PDEPLOY(number of beacons)
-        if (beaconsPos.size() >= state.MAX_BEACON_NUMBER) {
-            //System.out.println("Max beacons reached.");
-            return false;
-        }
-        */
         for (int i = 0; i < DEPLOY_TRIES; i++){
             while (true){
                 //PROBLEM TO DISCUSS: this leads to deploy a beacon out of reach.

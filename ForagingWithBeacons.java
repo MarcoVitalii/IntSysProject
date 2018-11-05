@@ -1,14 +1,10 @@
 import sim.engine.*;
 import sim.util.*;
 import sim.field.continuous.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class ForagingWithBeacons extends SimState
 {
     public static boolean PRINT_ON_FILE = true;
-    public static final int MAX_BEACON_NUMBER = 50;
     public static final double WORLD_SIZE = 100;
     public static final double X_NEST = 10.0;
     public static final double Y_NEST = 10.0;
@@ -19,42 +15,57 @@ public class ForagingWithBeacons extends SimState
     public Continuous2D beaconsPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D foodPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
     public Continuous2D nestPos = new Continuous2D(1.0, WORLD_SIZE, WORLD_SIZE);
-    double range = 10.0;
-    int antsNumber = 100;
-    double reward = 1.0;
-    double pExplore = 0.1;
-    double pFollow = 0.95;
-    double pDeploy = 0.5;
-    double pMove = 0.1;
-    int countMax = 5;
-    double beaconShrinkingFactor = 0.995;
+    public double range = 10.0;
+    public double minRange = 5.0;
+    public int antsNumber = 100;
+    public double reward = 1.0;
+    public double pExplore = 0.1;
+    public double pFollow = 0.95;
+    public double pMove = 0.1;
+    public int countMax = 5;
+    public int beaconTimeScale = 100000000;
+    public double beaconShrinkingFactor = Math.pow(minRange / range, 1.0 / beaconTimeScale);
+    //tau is a shape factor for pRemove
+    public double tau = 40;
+    //maxBeaconNumber is a shape factor for pDeploy
+    public int maxBeaconNumber = 50;
     public double evaporationConstant = 0.95;
     public final boolean fixedBeacons = false;
-    double[] actionsTaken = new double[10];
-    public double[] getActionsTaken () {return actionsTaken;}
-    public double getRange(){return range;}
-    public void setRange(double newRange){if (newRange >0) range = newRange;}
+    //double[] actionsTaken = new double[10];
+    //public double[] getActionsTaken () {return actionsTaken;}
+
+
+    //Setters and getters to manipulate the model through the Model panel in the console
     public int getAntsNumber(){return antsNumber;}
     public void setAntsNumber(int ants){if (ants >0) antsNumber = ants;}
+
     public double getPExplore(){return pExplore;}
     public void setPExplore(double expl){if (expl >=0 && expl <=1 ) pExplore = expl;}
+    public Object domPExplore () { return new sim.util.Interval(0.0,1.0);}
+
     public double getPFollow(){return pFollow;}
     public void setPFollow(double follow){if (follow >=0 && follow <=1 ) pFollow = follow;}
+    public Object domPFollow () { return new sim.util.Interval(0.0,1.0);}
+
     public double getEvaporationConstant(){return evaporationConstant;}
     public void setEvaporationConstant(double newConst){if (newConst >=0 && newConst <=1 ) evaporationConstant = newConst;}
     public Object domEvaporationConstant () { return new sim.util.Interval(0.0,1.0);}
-    public Object domPExplore () { return new sim.util.Interval(0.0,1.0);}
-    public Object domPFollow () { return new sim.util.Interval(0.0,1.0);}
-    //public double getPDeploy(){return pDeploy;}
-    //public void setPDeploy(double newConst){if (newConst >=0 && newConst <=1 ) pDeploy = newConst;}
-    //public Object domPDeploy () { return new sim.util.Interval(0.0,1.0);}
-    public Object domPDeploy () { return new sim.util.Interval(0.0,1.0);}
-    public Object domBeaconShrinkingFactor () { return new sim.util.Interval(0.0,1.0);}
-    public double getBeaconShrinkingFactor () { return beaconShrinkingFactor;}
-    public void setBeaconShrinkingFactor(double newFactor) {if (newFactor <= 1 && newFactor >0) beaconShrinkingFactor = newFactor;}
-    public Object domPMove () { return new sim.util.Interval(0.0,1.0);}
+
+    public int getBeaconTimeScale () { return beaconTimeScale;}
+    public void setBeaconTimeScale(int newFactor)
+    {
+        if ( newFactor > 0 ){
+        beaconTimeScale = newFactor;
+        beaconShrinkingFactor = Math.pow(minRange / range, 1.0 / beaconTimeScale);
+        }
+    }
+
     public double getPMove(){return pMove;}
     public void setPMove(double newP) {if (newP >=0 && newP <=1) pMove = newP;}
+    public Object domPMove () { return new sim.util.Interval(0.0,1.0);}
+
+
+    /* Features not included in current studies.
     double beaconSigma = 0;
     public double getBeaconSigma () {return beaconSigma;}
     public void setBeaconSigma (double bs) { if (bs >= 0 && bs <= range ) beaconSigma = bs;}
@@ -64,7 +75,9 @@ public class ForagingWithBeacons extends SimState
     public double getFoodSigma () {return foodSigma;}
     public void setFoodSigma (double fs) { if (fs >= 0 && fs <= range ) foodSigma = fs;}
     public Object domFoodSigma () { return new sim.util.Interval(0.0,range);}
-    public int getBeaconsNumber(){return beaconsPos.size();}
+    */
+    //agent needed to collect and print stats of the model
+    StatAgent stats;
 
 
     public ForagingWithBeacons(long seed)
@@ -102,43 +115,16 @@ public class ForagingWithBeacons extends SimState
         }
         Nest nest = new Nest();
         nestPos.setObjectLocation(nest, new Double2D(X_NEST, Y_NEST));
-        schedule.scheduleRepeating(schedule.EPOCH, 1, nest, MEAN_TIME);
-	Food food = new Food();
-        foodPos.setObjectLocation(food, new Double2D(X_FOOD, Y_FOOD));
-	schedule.scheduleRepeating(schedule.EPOCH, 1, food);
-        //New part to create data files that logs performances
-        if (PRINT_ON_FILE){
-            try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/settings.txt"))){
-                bw.write("ants number: "+ antsNumber
-                         +"\nrange: "+range
-                         +"\nreward: "+ reward
-                         +"\ncountMax: " + countMax
-                         +"\npExplore: " + pExplore
-                         +"\npFollow: " + pFollow
-                         +"\npMove: " + pMove
-                         +"\nevaporationConstant: " + evaporationConstant
-                         +"\nMAX_BEACON_NUMBER: "+ MAX_BEACON_NUMBER
-                         +"\nWORLD_SIZE: " + WORLD_SIZE
-                         +"\nX_NEST: " + X_NEST
-                         +"\nY_NEST: " + Y_NEST
-                         +"\nX_FOOD: " + X_FOOD
-                         +"\nY_FOOD: " + Y_FOOD
-                         +"\nMEAN_TIME: " + MEAN_TIME
-                         );
-            }
-            catch(IOException e){}
 
-            schedule.scheduleRepeating(schedule.EPOCH,2, new Steppable(){
-                    public void step (SimState state)
-                    {
-                        ForagingWithBeacons fwb = (ForagingWithBeacons) state;
-                        Nest nest =(Nest)(fwb.nestPos.getAllObjects().get(0));
-                        try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/"+seed()+".csv",true))){
-                            bw.write(fwb.schedule.time()+","+nest.foodIncomingRate+","+fwb.beaconsPos.size()+","+nest.skewedAvgLength+"\n");
-                        }
-                        catch(IOException e){}
-                    }
-                },MEAN_TIME);
+        //schedule.scheduleRepeating(schedule.EPOCH, 1, nest, MEAN_TIME);
+        Food food = new Food();
+        foodPos.setObjectLocation(food, new Double2D(X_FOOD, Y_FOOD));
+        //line below is needed if food is allowed do do a random walk.
+        //schedule.scheduleRepeating(schedule.EPOCH, 1, food);
+
+        if (PRINT_ON_FILE){
+            stats = new StatAgent (this);
+            schedule.scheduleRepeating(schedule.EPOCH, 2, stats, stats.MEAN_TIME);
         }
     }
     public static void main(String[] args)

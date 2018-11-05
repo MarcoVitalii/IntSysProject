@@ -1,2 +1,6 @@
 *.class
-data
+data/*
+!data/database.csv.bz2
+script.sh
+python/*
+!python/dataAnalysis.ipynb
