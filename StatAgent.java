@@ -22,13 +22,14 @@ class StatAgent implements Steppable {
     public double getMeanTravelLength () {return meanTravelLength;}
     public double getSkewedAvgLength () {return skewedAvgLength;}
 
-    public StatAgent (ForagingWithBeacons state)
+    public StatAgent (ForagingWithBeacons state, boolean PRINT_ON_FILE)
     {
         foodRecovered = 0;
         prevFoodRecovered = 0;
         foodIncomingRate = 0;
         meanTravelLength = 0;
         normFactor = MEAN_TIME * state.antsNumber;
+        if (!PRINT_ON_FILE) return;
         try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/settings.txt"))){
             bw.write("ants number: "+ state.antsNumber
                      +"\nrange: "+state.range
