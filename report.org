@@ -1,0 +1,20 @@
+#+TITLE: Collaborative foraging using beacons, further developments
+#+AUTHOR: Marco Vitali
+
+* Aim of the project
+This project is inspired by the work done in [[http://cs.gmu.edu/~sean/papers/aamas10-beacons.pdf][Collaborative foraging using beacons]]. Once implemented the same algorithm in an obstacle free environment, the effect of a finite beacon's lifetime is studied. 
+This setting reflects a more realistic environment where beacons are powered by batteries and their range decreases with time. The dependency between range and time is a decreasing exponential.
+
+* Implementation of the model in MASON
+  MASON provides a class SimState as core engine to develop simulations. Inside there's a scheduler 
+  to handle agents action and a good random number generator to handle the stochastic side of the model.
+  ForagingWithBeacons extends this class including all the Continuous2D fields needed to locate agents, beacons, 
+  nests and food. All the key elements of the model are classes that implement the Steppable interface required by 
+  the scheduler's methods.
+  Up to this point the simulation runs without any graphical interface and is launched from command line as 
+#+BEGIN_SRC shell
+java ForagingWithBeacons --time 100000 --until 100000 --repeat 10 --parallel 4
+#+END_SRC
+  
+* Solving issues emerged from the model
+* Effects of beacon's lifetime on ants performances
