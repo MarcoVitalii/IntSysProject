@@ -1,21 +1,21 @@
-# #+TITLE: Collaborative foraging using beacons, further developments
-
+#+TITLE: Collaborative foraging using beacons, further developments
+#+AUTHOR: Marco Vitali
 * Aim of the project
 This project is inspired by the work done in [[http://cs.gmu.edu/~sean/papers/aamas10-beacons.pdf][Collaborative foraging using beacons]]. 
 Once implemented the same algorithm in an obstacle free environment, this project will focus on the effects of 2 main changes:
 
 
-1)A variation on the probability of deploying and removing beacons:
+1) A variation on the probability of deploying and removing beacons:
  the algorithm has a constant pDeploy = 0.9 until maxBeaconNumber is reached. At this threshold no more beacons can be deployed. 
  This poses two problems: first off, if maxBeaconNumber is too low, the initial exploration can't cover enough environment to reach the food. Secondly,
  if the beacons's network is broken into disconnected pieces and maxBeaconNumber is reached with no accessible beacon that can be removed, the algorithm grinds to a halt.
- To ease this limitations a new pDeploy is used. It takes the functional form of $$ pDeploy(beaconsNumber) = \exp{-\frac{beaconsNumber}{maxBeaconNumber}} $$.
+ To ease this limitations a new pDeploy is used. It takes the functional form of  pDeploy(beaconsNumber) = exp(-beaconsNumber/maxBeaconNumber).
  Such function allows to get over the threshold if it's set too low and allows the creation of new beacons at any time at a cost of an increasingly small probability
  of deployment. Then a second variation is introduced to solve the problem of getting stuck in local maxima. This issue arises once a region of the beacons's network is separated from 
  the rest of the connected part. Said region collapses on  it's local maximum and every beacon deployed will be subsequently be removed as is obsolete( the maximum has the same
  neighborhood and has higher values of pheromones). The only way to get out of this situation is to hope that the network gets reconnected by the ants which aren't trapped
  inside the maximum. The proposed solution works by taking into account a locality estimator called localityCount defined as the time spent without changing the beacon chosen
- as best candidate inside canRemove. With probability $ pRemove( localityCount) = 1 - ( 1 - \frac{localityCount}{\tau})^(0.2))$ the currBeacon is removed even
+ as best candidate inside canRemove. With probability  pRemove(localityCount) = 1 - ( 1 - localityCount/\tau)^0.2 the currBeacon is removed even
  if canRemove returns false. This allows the removal of local maxima. If said maximum is the only beacon in its neighborhood, a new exploration will start with beacons with 0
  as pheromone values wich can't be removed until they reconnect with the rest of the network.
 
