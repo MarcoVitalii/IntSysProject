@@ -23,15 +23,15 @@ public class ForagingWithBeacons extends SimState
     public double pFollow = 0.95;
     public double pMove = 0.1;
     public int countMax = 5;
-    public int beaconTimeScale = 150;
+    public int beaconTimeScale = 1000000;
     public double beaconShrinkingFactor = Math.pow(minRange / range, 1.0 / beaconTimeScale);
     //tau is a shape factor for pRemove
-    public double tau = 40;
+    public double tau = 80;
     //maxBeaconNumber is a shape factor for pDeploy
-    public int maxBeaconNumber = 50;
+    public int maxBeaconNumber = 100;
     public double evaporationConstant = 0.95;
     public final boolean fixedBeacons = false;
-    public final boolean ARTICLE_CODE = true;
+    public boolean ARTICLE_CODE = false;
     //double[] actionsTaken = new double[10];
     //public double[] getActionsTaken () {return actionsTaken;}
 
@@ -64,6 +64,12 @@ public class ForagingWithBeacons extends SimState
     public double getPMove(){return pMove;}
     public void setPMove(double newP) {if (newP >=0 && newP <=1) pMove = newP;}
     public Object domPMove () { return new sim.util.Interval(0.0,1.0);}
+
+    public int getMaxBeaconNumber () {return maxBeaconNumber;}
+    public void setMaxBeaconNumber( int newMax){ if(newMax > 0) maxBeaconNumber = newMax;}
+
+    public boolean getARTICLE_CODE () { return ARTICLE_CODE;}
+    public void setARTICLE_CODE (boolean state) {ARTICLE_CODE = state;}
 
 
     /* Features not included in current studies.
@@ -108,21 +114,14 @@ public class ForagingWithBeacons extends SimState
                 }
             }
         }
-
         if (ARTICLE_CODE){
-            beaconShrinkingFactor = 1.0;
             for (int k=0; k < antsNumber; k++){
                 Ant ant = new Ant(reward){
-                        public double pRemove(ForagingWithBeacons fwb)
-                        {
-                            return 1;
-                        }
                         public double pDeploy(ForagingWithBeacons fwb)
                         {
                             if (fwb.beaconsPos.size() < fwb.maxBeaconNumber)
                                 return 0.9;
                             else{
-                                System.out.println("MAX BEACON REACHED");
                                 return 0.0;
                             }
                         }

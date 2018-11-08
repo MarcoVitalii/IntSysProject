@@ -4,3 +4,5 @@ data/*
 script.sh
 python/*
 !python/dataAnalysis.ipynb
+ForagingWithBeaconsArgsAsParameters.java
+!data/diffMaxBeacons.csv.bz2

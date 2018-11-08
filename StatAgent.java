@@ -70,7 +70,7 @@ class StatAgent implements Steppable {
         meanSqFoodPerAnt /= ants.size();
         try(BufferedWriter bw = new BufferedWriter(new FileWriter("data/"+state.seed()+".csv",true))){
             bw.write(fwb.beaconTimeScale + "," +
-                     fwb.minRange + "," +
+                     fwb.maxBeaconNumber + "," +
                      fwb.schedule.time() + "," +
                      foodIncomingRate + "," +
                      foodRecovered + "," +
