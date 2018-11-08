@@ -1,6 +1,7 @@
-#+TITLE: Collaborative foraging using beacons, further developments
-#+AUTHOR: Marco Vitali
-* Aim of the project
+#+OPTIONS: tex:t
+* Collaborative foraging using beacons, further developments
+
+** Aim of the project
 This project is inspired by the work done in [[http://cs.gmu.edu/~sean/papers/aamas10-beacons.pdf][Collaborative foraging using beacons]]. 
 Once implemented the same algorithm in an obstacle free environment, this project will focus on the effects of 2 main changes:
 
@@ -9,13 +10,13 @@ Once implemented the same algorithm in an obstacle free environment, this projec
  the algorithm has a constant pDeploy = 0.9 until maxBeaconNumber is reached. At this threshold no more beacons can be deployed. 
  This poses two problems: first off, if maxBeaconNumber is too low, the initial exploration can't cover enough environment to reach the food. Secondly,
  if the beacons's network is broken into disconnected pieces and maxBeaconNumber is reached with no accessible beacon that can be removed, the algorithm grinds to a halt.
- To ease this limitations a new pDeploy is used. It takes the functional form of  pDeploy(beaconsNumber) = exp(-beaconsNumber/maxBeaconNumber).
+ To ease this limitations a new pDeploy is used. It takes the functional form of  $pDeploy(beaconsNumber)=exp(-\frac{beaconsNumber}{maxBeaconNumber})$.
  Such function allows to get over the threshold if it's set too low and allows the creation of new beacons at any time at a cost of an increasingly small probability
  of deployment. Then a second variation is introduced to solve the problem of getting stuck in local maxima. This issue arises once a region of the beacons's network is separated from 
  the rest of the connected part. Said region collapses on  it's local maximum and every beacon deployed will be subsequently be removed as is obsolete( the maximum has the same
  neighborhood and has higher values of pheromones). The only way to get out of this situation is to hope that the network gets reconnected by the ants which aren't trapped
  inside the maximum. The proposed solution works by taking into account a locality estimator called localityCount defined as the time spent without changing the beacon chosen
- as best candidate inside canRemove. With probability  pRemove(localityCount) = 1 - ( 1 - localityCount/\tau)^0.2 the currBeacon is removed even
+ as best candidate inside canRemove. With probability  \( pRemove(localityCount)=1-(1-\frac{localityCount}{\tau})^{0.2} \) the currBeacon is removed even
  if canRemove returns false. This allows the removal of local maxima. If said maximum is the only beacon in its neighborhood, a new exploration will start with beacons with 0
  as pheromone values wich can't be removed until they reconnect with the rest of the network.
 
@@ -26,7 +27,7 @@ by batteries and their range decreases with time. A beacon timescale is introduc
  The stability and performance of the algorithm will be tested at various values of beacon's timescale.
 
 
-* Model's description
+** Model's description
   The environment simulated is a bounded continuous field of size 100x100 in arbitrary units of length.
   Inside this field there's a fixed nest located at (10, 10) from the top left corner and 
   a fixed source of food located at (90, 90). The agents inside the model are ants that start the simulation at nest's position.
@@ -50,7 +51,7 @@ The performances of the model are measured with this metrics:
 3) Total food recovered at a fixed time.
    
    
-* Implementation of the model in MASON
+** Implementation of the model in MASON
   MASON provides a class SimState as core engine to develop simulations. Inside there's a scheduler 
   to handle agents's actions and a good random number generator to handle the stochastic side of the model.
   ForagingWithBeacons extends this class including all the Continuous2D fields needed to locate agents, beacons, 
@@ -62,7 +63,7 @@ The performances of the model are measured with this metrics:
   model's behaviour, to change on the fly few key parameters. The rapresentation of every element of the simulation is inside "Running the simulation" chapter.
   
   
-* Running the simulation
+** Running the simulation
 Once downloaded MASON and the accessory libraries from [[https://cs.gmu.edu/%7Eeclab/projects/mason/#Download][the ufficial website]], follow their instructions to set correctly the CLASSPATH in your environment and add to it the path of your cloned repository of this project.
 Compile all java classes inside the project and from here there are two options to run simulations.
 There's a command line version that runs simulations as
@@ -98,7 +99,7 @@ The graphical representation of every component of the model is as it follows:
 - Food sources are cyan ovals.
   
   
-* Beyond a fixed upper limit of deployable beacons
+** Beyond a fixed upper limit of deployable beacons
 As previously stated, this first section has been developed to alleviate the problems that stop the agents from creating
  and optimizing the path between food and nest. The main focus is on the first and third phase descripted inside the "model description" chapter.
 The first idea is to make sure that ants can deploy enough beacons to find the food, keeping a notion of upper limit of beacons 
@@ -119,4 +120,4 @@ As predicted the "const" variation is not able to create a path
   
 
 
-* Effects of beacon's lifetime on ants performances
+** Effects of beacon's lifetime on ants performances
