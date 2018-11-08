@@ -1,4 +1,4 @@
-#+TITLE: Collaborative foraging using beacons, further developments
+# #+TITLE: Collaborative foraging using beacons, further developments
 
 * Aim of the project
 This project is inspired by the work done in [[http://cs.gmu.edu/~sean/papers/aamas10-beacons.pdf][Collaborative foraging using beacons]]. 
@@ -9,7 +9,7 @@ Once implemented the same algorithm in an obstacle free environment, this projec
  the algorithm has a constant pDeploy = 0.9 until maxBeaconNumber is reached. At this threshold no more beacons can be deployed. 
  This poses two problems: first off, if maxBeaconNumber is too low, the initial exploration can't cover enough environment to reach the food. Secondly,
  if the beacons's network is broken into disconnected pieces and maxBeaconNumber is reached with no accessible beacon that can be removed, the algorithm grinds to a halt.
- To ease this limitations a new pDeploy is used. It takes the functional form of $pDeploy(beaconsNumber) = \exp{-\frac{beaconsNumber}{maxBeaconNumber}}$.
+ To ease this limitations a new pDeploy is used. It takes the functional form of $$ pDeploy(beaconsNumber) = \exp{-\frac{beaconsNumber}{maxBeaconNumber}} $$.
  Such function allows to get over the threshold if it's set too low and allows the creation of new beacons at any time at a cost of an increasingly small probability
  of deployment. Then a second variation is introduced to solve the problem of getting stuck in local maxima. This issue arises once a region of the beacons's network is separated from 
  the rest of the connected part. Said region collapses on  it's local maximum and every beacon deployed will be subsequently be removed as is obsolete( the maximum has the same
@@ -49,7 +49,7 @@ The performances of the model are measured with this metrics:
 2) Food incoming rate: the ammount of food collected in an interval of 100 timesteps.
 3) Total food recovered at a fixed time.
    
-
+   
 * Implementation of the model in MASON
   MASON provides a class SimState as core engine to develop simulations. Inside there's a scheduler 
   to handle agents's actions and a good random number generator to handle the stochastic side of the model.
@@ -72,28 +72,13 @@ java ForagingWithBeacons --time 100000 --until 100000 --repeat 10 --parallel 4
 where various flags can control the number of simulations and their duration. If this code is used,
  inside ./data/ will be generated a settings.txt file containing all parameters's values and there'll 
 be a file for every simulation with its seed as name. The following informations are stored every 100 timesteps:
-| position | content          |
-|----------+------------------|
-|        1 | BeaconLifetime   |
-|        2 | maxBeaconNumber  |
-|        3 | time             |
-|        4 | foodIncomingRate |
-|        5 | foodRecovered    |
-|        6 | beaconsNumber    |
-|        7 | avgPathLength    |
-|        8 | foundFood        |
-|        9 | foundHome        |
-|       10 | beaconRem        |
-|       11 | exploration      |
-|       12 | startExploration |
-|       13 | beaconMov        |
-|       14 | followPh         |
-|       15 | beaconDep        |
-|       16 | wanderPh         |
-|       17 | randomMove       |
-|       18 | foodPerAnt       |
-|       19 | sqFoodPerAnt     |
-|       20 | seed             |
+| position | content          | position | content       | position | content          | position | content      |
+|----------+------------------+----------+---------------+----------+------------------+----------+--------------|
+|        1 | BeaconLifetime   |        6 | beaconsNumber |       11 | exploration      |       16 | wanderPh     |
+|        2 | maxBeaconNumber  |        7 | avgPathLength |       12 | startExploration |       17 | randomMove   |
+|        3 | time             |        8 | foundFood     |       13 | beaconMov        |       18 | foodPerAnt   |
+|        4 | foodIncomingRate |        9 | foundHome     |       14 | followPh         |       19 | sqFoodPerAnt |
+|        5 | foodRecovered    |       10 | beaconRem     |       15 | beaconDep        |       20 | seed         |
 Fields from 8 to 18 are the distribution of actions taken by all ants.
 FoodPerAnt and sqFoodPerAnt are the mean and the mean of the square of food recovered over the ants. The square is a measure of variance between single ants. 
 
