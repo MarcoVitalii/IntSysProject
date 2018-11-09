@@ -102,18 +102,48 @@ deployable in a less strict sense.
 The problem is shown here:
 
 [[img/notEnoughBeacons.gif]]
+
+
+
 The last frame captured shows a configuration of unconnected islands of beacons with ants stucked inside. The pheromone levels are distributed in such a way that there aren't beacons
 removable and maxBeaconNumber is reached.
-
- By choosing $pDeploy(beaconsNumber) = \exp(-\frac{beaconsNumber}{maxBeaconNumber})$ is ensured that there's always a 
+ By choosing pDeploy(beaconsNumber) = exp( - beaconsNumber / maxBeaconNumber ) is ensured that there's always a 
 chace of deploying a new becon, but the probability of it happening drops very significantly as the number of current beacons deployed grows. Inside 
 the simulations this variation of the algorithm will be identified with the "exp" label.
 
 
-A second variation is introduced to avoid of being stuck in local maxima. As widely discussed inside the "aim of the project" chapter, the probability of removing
+Using the same parameters as the previous simulation shown, once this new pDeploy is adopted, the algorithm is able to reach the objective:
+
+
+[[img/notEnoughBeaconsExp.gif]]
+
+
+
+A second variation is introduced to avoid of being stuck in local maxima. In the gif below is shown a simulation with 10 ants and a maxBeaconNumber = 30. 
+This extreme condition is used to show clearly the impact of this variation of the algorithm.
+This is the behaviour emergent from the "exp" variation (as the algorithm with pDeploy constant won't be able to reach the food).
+
+
+[[img/stuckExp.gif]]
+
+
+Once the food is reached, the connectedness of the beacon's network is broken into pieces and as time goes on all ants gets stuck in local maxima.
+
+
+
+As widely discussed inside the "aim of the project " chapter, the probability of removing
 a beacon even if it doesn't have the requirements set inside canRemove helps to mitigate this issue. The shape of the functional form of pRemove allows for a quite
 good tollerance for increasingly high values of localityCount. This variation of the algorithm is labelled "expAndRem".
 
+
+Here is a run of exactly the same simulation with this additional removal option. The frames of the gif refers to the same time inside the simulation.
+
+
+[[img/stuckExpAndRem.gif]]
+
+
+As the ants gets stuck inside local maxima, the dominant beacon is deleted. Signs of this behaviour are the red parts of the beacon's network, where the ants remained without a
+beacon and started a new exploration ( similar to the exploration carried out at the beginning, but in this case also the ferrying pheromone is set to 0).
 
 
 The performances of the article's model (labelled "const") and the two variations can be viewed in this gif: 
