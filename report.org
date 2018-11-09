@@ -9,13 +9,13 @@ Once implemented the same algorithm in an obstacle free environment, this projec
  the algorithm has a constant pDeploy = 0.9 until maxBeaconNumber is reached. At this threshold no more beacons can be deployed. 
  This poses two problems: first off, if maxBeaconNumber is too low, the initial exploration can't cover enough environment to reach the food. Secondly,
  if the beacons's network is broken into disconnected pieces and maxBeaconNumber is reached with no accessible beacon that can be removed, the algorithm grinds to a halt.
- To ease this limitations a new pDeploy is used. It takes the functional form of  pDeploy(beaconsNumber) = exp(-{beaconsNumber}/{maxBeaconNumber}).
+ To ease this limitations a new pDeploy is used. It takes the functional form of  pDeploy(beaconsNumber) = exp(- beaconsNumber / maxBeaconNumber ).
  Such function allows to get over the threshold if it's set too low and allows the creation of new beacons at any time at a cost of an increasingly small probability
  of deployment. Then a second variation is introduced to solve the problem of getting stuck in local maxima. This issue arises once a region of the beacons's network is separated from 
  the rest of the connected part. Said region collapses on  it's local maximum and every beacon deployed will be subsequently be removed as is obsolete( the maximum has the same
  neighborhood and has higher values of pheromones). The only way to get out of this situation is to hope that the network gets reconnected by the ants which aren't trapped
  inside the maximum. The proposed solution works by taking into account a locality estimator called localityCount defined as the time spent without changing the beacon chosen
- as best candidate inside canRemove. With probability  pRemove( localityCount ) = 1 - ( 1 - localityCount / \tau)^{0.2} the currBeacon is removed even
+ as best candidate inside canRemove. With probability  pRemove( localityCount ) = 1 - ( 1 - localityCount / \tau)^(0.2) the currBeacon is removed even
  if canRemove returns false. This allows the removal of local maxima. If said maximum is the only beacon in its neighborhood, a new exploration will start with beacons with 0
  as pheromone values wich can't be removed until they reconnect with the rest of the network.
 2) The implementation of a finite beacon's lifetime.This setting reflects a more realistic environment where beacons are powered by batteries and their range decreases with time. A beacon timescale is introduced, that sets the period in which the beacon's range will decrease exponentially until
@@ -35,12 +35,10 @@ Once implemented the same algorithm in an obstacle free environment, this projec
 As a general idea of what happens inside a typical simulation, few phases can be identified:
 
 
-1) Searching phase: in the first part of the simulation the fact that every beacon has a 0 foraging pheromone allows them to be unremovable,
-so the ants cover the map with an irregular grid of beacons until the system runs out of deployable beacons and it almost halts itself of food is found.
-2) Reinforcing the best path: once food is found, ants start to get back to the nest, creating a sub-optimal path that will be optimized by straightening beacon's position
-through move actions or taking paths that have less beacons inside them
-3) Eventually through the removal or movement of the beacons the network will be divided into disconnected parts. If the isolated beacon don't have any ant inside they are left
-on their own. If ants are trapped inside this disconnected network of beacons they can either  collapse the network on the local maximum or reconnect to the rest of the beacons.
+1) Searching phase: in the first part of the simulation the fact that every beacon has a 0 foraging pheromone allows them to be unremovable, so the ants cover the map with an irregular grid of beacons until the system runs out of deployable beacons and it almost halts itself of food is found.
+2) Reinforcing the best path: once food is found, ants start to get back to the nest, creating a sub-optimal path that will be optimized by straightening beacon's position through move actions or taking paths that have less beacons inside them
+3) Eventually through the removal or movement of the beacons the network will be divided into disconnected parts. If the isolated beacon don't have any ant inside they are left on their own. If ants are trapped inside this disconnected network of beacons they can either  collapse the network on the local maximum or reconnect to the rest of the beacons.
+
 
 The performances of the model are measured with this metrics:
 1) Mean travel length : time needed to start from the nest and come back with food.
@@ -100,7 +98,13 @@ The graphical representation of every component of the model is as it follows:
 As previously stated, this first section has been developed to alleviate the problems that stop the agents from creating
  and optimizing the path between food and nest. The main focus is on the first and third phase descripted inside the "model description" chapter.
 The first idea is to make sure that ants can deploy enough beacons to find the food, keeping a notion of upper limit of beacons 
-deployable in a less strict sense. By choosing $pDeploy(beaconsNumber) = \exp(-\frac{beaconsNumber}{maxBeaconNumber})$ is ensured that there's always a 
+deployable in a less strict sense.
+The problem is shown in this video:
+
+[[img/notEnoughBeacons.mp4]]
+
+
+ By choosing $pDeploy(beaconsNumber) = \exp(-\frac{beaconsNumber}{maxBeaconNumber})$ is ensured that there's always a 
 chace of deploying a new becon, but the probability of it happening drops very significantly as the number of current beacons deployed grows. Inside 
 the simulations this variation of the algorithm will be identified with the "exp" label.
 
@@ -113,7 +117,18 @@ good tollerance for increasingly high values of localityCount. This variation of
 
 The performances of the article's model (labelled "const") and the two variations can be viewed in this gif: 
 [[./img/diffMaxBeacon.gif]]
-As predicted the "const" variation is not able to create a path
+
+
+As predicted the "const" variation is not able to create a path between nest and food for values of maxBeaconNumber smaller than 100.
+The other variations, on the other hand, allow a huge spike in the number of beacons deployed at the beginning of the simulation and then an equilibrium 
+between pDeploy and the removal of beacons is reached. The effectiveness of evading local minima through their deletion shines at low maxBeaconNumber as is 
+very unlikely that other ants create a bridge to escape from local minima.
+
+
+As maxBeaconNumber grows bigger enough, the performance of the models reach the maximum. Once the path between food and nest is established, the algorithm regolates
+the number of active beacons reaching an equilibrium that is the same for all models. The equilibrium that emerges from "expAndRem" at maxBeaconNumber = 100 shows
+that peak performances in the food retrival (shown by the foodIncomeRate) can be achieved with less beacons, as this settings has, on average, around 100 beacons deployed
+versus the average of 120 for bigger maxBeaconNumber values.
   
 
 

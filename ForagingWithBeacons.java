@@ -28,7 +28,7 @@ public class ForagingWithBeacons extends SimState
     //tau is a shape factor for pRemove
     public double tau = 80;
     //maxBeaconNumber is a shape factor for pDeploy
-    public int maxBeaconNumber = 100;
+    public int maxBeaconNumber = 50;
     public double evaporationConstant = 0.95;
     public final boolean fixedBeacons = false;
     public boolean ARTICLE_CODE = false;
@@ -114,6 +114,7 @@ public class ForagingWithBeacons extends SimState
                 }
             }
         }
+        beaconShrinkingFactor = 1.0;
         if (ARTICLE_CODE){
             for (int k=0; k < antsNumber; k++){
                 Ant ant = new Ant(reward){
