@@ -99,10 +99,11 @@ As previously stated, this first section has been developed to alleviate the pro
  and optimizing the path between food and nest. The main focus is on the first and third phase descripted inside the "model description" chapter.
 The first idea is to make sure that ants can deploy enough beacons to find the food, keeping a notion of upper limit of beacons 
 deployable in a less strict sense.
-The problem is shown in this video:
+The problem is shown here:
 
-[[img/notEnoughBeacons.mp4]]
-
+[[img/notEnoughBeacons.gif]]
+The last frame captured shows a configuration of unconnected islands of beacons with ants stucked inside. The pheromone levels are distributed in such a way that there aren't beacons
+removable and maxBeaconNumber is reached.
 
  By choosing $pDeploy(beaconsNumber) = \exp(-\frac{beaconsNumber}{maxBeaconNumber})$ is ensured that there's always a 
 chace of deploying a new becon, but the probability of it happening drops very significantly as the number of current beacons deployed grows. Inside 
