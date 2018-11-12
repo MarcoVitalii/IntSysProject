@@ -75,7 +75,7 @@ class StatAgent implements Steppable {
                      foodIncomingRate + "," +
                      foodRecovered + "," +
                      fwb.beaconsPos.size() + "," +
-                     skewedAvgLength + "," +
+                     meanTravelLength + "," +
                      (actionsTaken[0] / normFactor)  + "," +
                      (actionsTaken[1] / normFactor)  + "," +
                      (actionsTaken[2] / normFactor)  + "," +

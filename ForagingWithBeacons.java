@@ -23,15 +23,16 @@ public class ForagingWithBeacons extends SimState
     public double pFollow = 0.95;
     public double pMove = 0.1;
     public int countMax = 5;
-    public int beaconTimeScale = 1000000;
+    public int beaconTimeScale = 4;
     public double beaconShrinkingFactor = Math.pow(minRange / range, 1.0 / beaconTimeScale);
     //tau is a shape factor for pRemove
     public double tau = 80;
     //maxBeaconNumber is a shape factor for pDeploy
-    public int maxBeaconNumber = 50;
+    public int maxBeaconNumber = 100;
     public double evaporationConstant = 0.95;
     public final boolean fixedBeacons = false;
     public boolean ARTICLE_CODE = false;
+    public boolean RND_ANT = false;
     //double[] actionsTaken = new double[10];
     //public double[] getActionsTaken () {return actionsTaken;}
 
@@ -114,7 +115,6 @@ public class ForagingWithBeacons extends SimState
                 }
             }
         }
-        beaconShrinkingFactor = 1.0;
         if (ARTICLE_CODE){
             for (int k=0; k < antsNumber; k++){
                 Ant ant = new Ant(reward){
@@ -127,6 +127,13 @@ public class ForagingWithBeacons extends SimState
                             }
                         }
                     };
+                antsPos.setObjectLocation(ant, new Double2D(X_NEST, Y_NEST));
+                schedule.scheduleRepeating(schedule.EPOCH, 0, ant);
+            }
+        }
+        else if (RND_ANT){
+            for (int k=0; k < antsNumber; k++){
+                RndAnt ant = new RndAnt();
                 antsPos.setObjectLocation(ant, new Double2D(X_NEST, Y_NEST));
                 schedule.scheduleRepeating(schedule.EPOCH, 0, ant);
             }

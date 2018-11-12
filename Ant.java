@@ -104,8 +104,8 @@ public class Ant implements Steppable
             // if(printStatus) System.out.println("nest Reached.");
             actionTaken = 1;
         }
-        else if (hasBeacon && (canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange))){
-                               //|| fwb.random.nextDouble() >= pRemove)){
+        else if (hasBeacon && (canRemove(fwb, neighbors, hasFoodInRange, hasNestInRange)
+                               || fwb.random.nextDouble() >= pRemove)){
             //if(printStatus) System.out.println("removed beacon "+currBeacon);
             remove(beaconsPos);
             actionTaken = 2;

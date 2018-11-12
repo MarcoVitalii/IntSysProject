@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2018-11-08 gio 18:37 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="marco" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org4858cdd">1. Aim of the project</a></li>
+<li><a href="#orgfde524b">2. Model's description</a></li>
+<li><a href="#orgaedbb3c">3. Implementation of the model in MASON</a></li>
+<li><a href="#org5921895">4. Running the simulation</a></li>
+<li><a href="#org954394f">5. Beyond a fixed upper limit of deployable beacons</a></li>
+<li><a href="#orgcd615eb">6. Effects of beacon's lifetime on ants performances</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org4858cdd" class="outline-2">
+<h2 id="org4858cdd"><span class="section-number-2">1</span> Aim of the project</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This project is inspired by the work done in <a href="http://cs.gmu.edu/~sean/papers/aamas10-beacons.pdf">Collaborative foraging using beacons</a>. 
+Once implemented the same algorithm in an obstacle free environment, this project will focus on the effects of 2 main changes:
+</p>
+
+
+<p>
+1)A variation on the probability of deploying and removing beacons:
+ the algorithm has a constant pDeploy = 0.9 until maxBeaconNumber is reached. At this threshold no more beacons can be deployed. 
+ This poses two problems: first off, if maxBeaconNumber is too low, the initial exploration can't cover enough environment to reach the food. Secondly,
+ if the beacons's network is broken into disconnected pieces and maxBeaconNumber is reached with no accessible beacon that can be removed, the algorithm grinds to a halt.
+ To ease this limitations a new pDeploy is used. It takes the functional form of \[ pDeploy(beaconsNumber) = \exp{-\frac{beaconsNumber}{maxBeaconNumber}} \].
+ Such function allows to get over the threshold if it's set too low and allows the creation of new beacons at any time at a cost of an increasingly small probability
+ of deployment. Then a second variation is introduced to solve the problem of getting stuck in local maxima. This issue arises once a region of the beacons's network is separated from 
+ the rest of the connected part. Said region collapses on  it's local maximum and every beacon deployed will be subsequently be removed as is obsolete( the maximum has the same
+ neighborhood and has higher values of pheromones). The only way to get out of this situation is to hope that the network gets reconnected by the ants which aren't trapped
+ inside the maximum. The proposed solution works by taking into account a locality estimator called localityCount defined as the time spent without changing the beacon chosen
+ as best candidate inside canRemove. With probability $ pRemove( localityCount) = 1 - ( 1 - \frac{localityCount}{\tau})<sup>(0.2)</sup>)$ the currBeacon is removed even
+ if canRemove returns false. This allows the removal of local maxima. If said maximum is the only beacon in its neighborhood, a new exploration will start with beacons with 0
+ as pheromone values wich can't be removed until they reconnect with the rest of the network.
+</p>
+
+
+<ol class="org-ol">
+<li>The implementation of a finite beacon's lifetime.This setting reflects a more realistic environment where beacons are powered</li>
+</ol>
+<p>
+by batteries and their range decreases with time. A beacon timescale is introduced, that sets the period in which the beacon's range will decrease exponentially until
+ a minumum range that, once reached, marks the end of the beacon's activity.
+ The stability and performance of the algorithm will be tested at various values of beacon's timescale.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgfde524b" class="outline-2">
+<h2 id="orgfde524b"><span class="section-number-2">2</span> Model's description</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The environment simulated is a bounded continuous field of size 100x100 in arbitrary units of length.
+Inside this field there's a fixed nest located at (10, 10) from the top left corner and 
+a fixed source of food located at (90, 90). The agents inside the model are ants that start the simulation at nest's position.
+At each timestep every agent follows the algorithm described in the previous article. For implementation reasons hole timesteps 
+are populated by ants's actions, half timesteps are populated by beacons's actions (they let the pheromones evaporate and, 
+if required, they shrink their range and deactivate themselfs if the end of their lifetime is reached).
+The desired collective behaviour is the emergence of an optimized path between food and nest 
+represented by a network of beacons which stores the values of pheromones used to guide the agent's movement.
+</p>
+
+<p>
+As a general idea of what happens inside a typical simulation, few phases can be identified:
+1)Searching phase: in the first part of the simulation the fact that every beacon has a 0 foraging pheromone allows them to be unremovable,
+so the ants cover the map with an irregular grid of beacons until the system runs out of deployable beacons and it almost halts itself of food is found.
+2)Reinforcing the best path: once food is found, ants start to get back to the nest, creating a sub-optimal path that will be optimized by straightening beacon's position
+through move actions or taking paths that have less beacons inside them
+3)Eventually through the removal or movement of the beacons the network will be divided into disconnected parts. If the isolated beacon don't have any ant inside they are left
+on their own. If ants are trapped inside this disconnected network of beacons they can either  collapse the network on the local maximum or reconnect to the rest of the beacons.
+</p>
+
+<p>
+The performances of the model are measured with this metrics:
+</p>
+<ol class="org-ol">
+<li>Mean travel length : time needed to start from the nest and come back with food.</li>
+<li>Food incoming rate: the ammount of food collected in an interval of 100 timesteps.</li>
+<li>Total food recovered at a fixed time.</li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-orgaedbb3c" class="outline-2">
+<h2 id="orgaedbb3c"><span class="section-number-2">3</span> Implementation of the model in MASON</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+MASON provides a class SimState as core engine to develop simulations. Inside there's a scheduler 
+to handle agents's actions and a good random number generator to handle the stochastic side of the model.
+ForagingWithBeacons extends this class including all the Continuous2D fields needed to locate agents, beacons, 
+nest and food. All the key elements of the model are classes that implement the Steppable interface required by 
+the scheduler's methods. An ausiliary agent called statAgent is used to gather and print out all useful data about the simulation.
+</p>
+
+
+<p>
+A graphical interface is then developed through various portrayals located inside MASON libraries to see in real time the 
+model's behaviour, to change on the fly few key parameters. The rapresentation of every element of the simulation is inside "Running the simulation" chapter.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org5921895" class="outline-2">
+<h2 id="org5921895"><span class="section-number-2">4</span> Running the simulation</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Once downloaded MASON and the accessory libraries from <a href="https://cs.gmu.edu/~eclab/projects/mason/#Download">the ufficial website</a>, follow their instructions to set correctly the CLASSPATH in your environment and add to it the path of your cloned repository of this project.
+Compile all java classes inside the project and from here there are two options to run simulations.
+There's a command line version that runs simulations as
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">java ForagingWithBeacons --time <span style="color: #a45bad;">100000</span> --until <span style="color: #a45bad;">100000</span> --repeat <span style="color: #a45bad;">10</span> --parallel <span style="color: #a45bad;">4</span>
+</pre>
+</div>
+<p>
+where various flags can control the number of simulations and their duration. If this code is used,
+ inside ./data/ will be generated a settings.txt file containing all parameters's values and there'll 
+be a file for every simulation with its seed as name. The following informations are stored every 100 timesteps:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">position</th>
+<th scope="col" class="org-left">content</th>
+<th scope="col" class="org-right">position</th>
+<th scope="col" class="org-left">content</th>
+<th scope="col" class="org-right">position</th>
+<th scope="col" class="org-left">content</th>
+<th scope="col" class="org-right">position</th>
+<th scope="col" class="org-left">content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">BeaconLifetime</td>
+<td class="org-right">6</td>
+<td class="org-left">beaconsNumber</td>
+<td class="org-right">11</td>
+<td class="org-left">exploration</td>
+<td class="org-right">16</td>
+<td class="org-left">wanderPh</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">maxBeaconNumber</td>
+<td class="org-right">7</td>
+<td class="org-left">avgPathLength</td>
+<td class="org-right">12</td>
+<td class="org-left">startExploration</td>
+<td class="org-right">17</td>
+<td class="org-left">randomMove</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">time</td>
+<td class="org-right">8</td>
+<td class="org-left">foundFood</td>
+<td class="org-right">13</td>
+<td class="org-left">beaconMov</td>
+<td class="org-right">18</td>
+<td class="org-left">foodPerAnt</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">foodIncomingRate</td>
+<td class="org-right">9</td>
+<td class="org-left">foundHome</td>
+<td class="org-right">14</td>
+<td class="org-left">followPh</td>
+<td class="org-right">19</td>
+<td class="org-left">sqFoodPerAnt</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">foodRecovered</td>
+<td class="org-right">10</td>
+<td class="org-left">beaconRem</td>
+<td class="org-right">15</td>
+<td class="org-left">beaconDep</td>
+<td class="org-right">20</td>
+<td class="org-left">seed</td>
+</tr>
+</tbody>
+</table>
+<p>
+Fields from 8 to 18 are the distribution of actions taken by all ants.
+FoodPerAnt and sqFoodPerAnt are the mean and the mean of the square of food recovered over the ants. The square is a measure of variance between single ants. 
+</p>
+
+
+<p>
+A second version is launched with
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">java ForagingWithBeaconsUI
+</pre>
+</div>
+<p>
+Here a graphical interface is created with a console that grants access to few relevant model's parameters and allows to start, pause and stop the simulation.
+Every element of the simulation is clickable and inside the inspector panel few parameters are shown.
+</p>
+
+
+<p>
+The graphical representation of every component of the model is as it follows:
+</p>
+<ul class="org-ul">
+<li>Beacons are represented as hexagons with a circle around them with the size of their range. The hexagon's color reflects the value of foraging pheromone while the outer circle's color reflects the value of ferrying pheromone. If the value of pheromones is 0 the hexagon or the outer circle is red as a visual cue to mark the fact that either the beacon is separated from the rest of the network or the propagation of foraging pheromone hasn't started yet(as no food has been found yet).</li>
+<li>Ants are dots and their color reflects their status: they are yellow if they  don't carry food or red if they do.</li>
+<li>Nests are represented as magenta ovals.</li>
+<li>Food sources are cyan ovals.</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org954394f" class="outline-2">
+<h2 id="org954394f"><span class="section-number-2">5</span> Beyond a fixed upper limit of deployable beacons</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+As previously stated, this first section has been developed to alleviate the problems that stop the agents from creating
+ and optimizing the path between food and nest. The main focus is on the first and third phase descripted inside the "model description" chapter.
+The first idea is to make sure that ants can deploy enough beacons to find the food, keeping a notion of upper limit of beacons 
+deployable in a less strict sense. By choosing \(pDeploy(beaconsNumber) = \exp(-\frac{beaconsNumber}{maxBeaconNumber})\) is ensured that there's always a 
+chace of deploying a new becon, but the probability of it happening drops very significantly as the number of current beacons deployed grows. Inside 
+the simulations this variation of the algorithm will be identified with the "exp" label.
+</p>
+
+
+<p>
+A second variation is introduced to avoid of being stuck in local maxima. As widely discussed inside the "aim of the project" chapter, the probability of removing
+a beacon even if it doesn't have the requirements set inside canRemove helps to mitigate this issue. The shape of the functional form of pRemove allows for a quite
+good tollerance for increasingly high values of localityCount. This variation of the algorithm is labelled "expAndRem".
+</p>
+
+
+
+<p>
+The performances of the article's model (labelled "const") and the two variations can be viewed in this gif: 
+<img src="./img/diffMaxBeacon.gif" alt="diffMaxBeacon.gif" />
+As predicted the "const" variation is not able to create a path
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgcd615eb" class="outline-2">
+<h2 id="orgcd615eb"><span class="section-number-2">6</span> Effects of beacon's lifetime on ants performances</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: marco</p>
+<p class="date">Created: 2018-11-08 gio 18:37</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

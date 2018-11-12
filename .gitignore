@@ -1,8 +1,11 @@
 *.class
 data/*
-!data/database.csv.bz2
+!data/beaconTimescale.csv.bz2
 script.sh
 python/*
 !python/dataAnalysis.ipynb
 ForagingWithBeaconsArgsAsParameters.java
 !data/diffMaxBeacons.csv.bz2
+img/*
+!img/beaconTimes*.svg
+!img/*.gif
