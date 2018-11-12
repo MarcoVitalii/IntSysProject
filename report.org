@@ -173,7 +173,7 @@ that an ant can update pheromones levels with the values of its previous positio
 Once addressed this problems, 60 simulations for every chosen beaconTimescale were executed, outputting the following results:
 
 
-[[img/eaconTimescalePerformance.svg]]
+[[img/beaconTimescalePerformance.svg]]
 
 
 As reported in this graphs, peformances aren't affected by beacon's lifetime if it is much higher than the mean time necessary
