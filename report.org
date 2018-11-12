@@ -173,7 +173,7 @@ that an ant can update pheromones levels with the values of its previous positio
 Once addressed this problems, 60 simulations for every chosen beaconTimescale were executed, outputting the following results:
 
 
-[[beaconTimescalePerformance.svg]]
+[[img/eaconTimescalePerformance.svg]]
 
 
 As reported in this graphs, peformances aren't affected by beacon's lifetime if it is much higher than the mean time necessary
@@ -190,7 +190,7 @@ path emerges as a macroscopic behaviour. From here to the highest scales the fra
 as reported in the mean distribution of actions taken by the ants:
 
 
-[[beaconTimescaleActions.svg]]
+[[img/beaconTimescaleActions.svg]]
 
 
 
@@ -200,7 +200,7 @@ As shown with the simulation's results, the number of deployed beacons reaches a
 the food source. Limitations on this number as a hard limit damages the perfomances if set to low as this first exploration phase won't be completed.
 The proposed pDeploy is able to lower the number of beacons deployed once the equilibrium has been reached at the cost of reducing also the performances. 
 The proposed removal of local maxima is an effective way to deal with them in the condition of a low density system, where the probability of getting reached 
-by the rest of the network is low. This alterations of the algorithm don't provide a tool to enable a sparser beacons's graph bu 
+by the rest of the network is low. 
 
 
 
