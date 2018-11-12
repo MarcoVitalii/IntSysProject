@@ -6,8 +6,7 @@ Once implemented the same algorithm in an obstacle free environment, this projec
 
 
 1) A variation on the probability of deploying and removing beacons:
- The article states that to ensure a sparse beacons's network the maximum number of beacons deployable is set reasonably low. In this project this assumption is challenged 
-proposing a new way to deploy beacons and regulate their number.
+ The article states that to ensure a sparse beacons's network the maximum number of beacons deployable is set reasonably low. In this project this assumption is challenged proposing a new way to deploy beacons and regulate their number.
  In the original article new beacons are deployed with a constant probability pDeploy = 0.9 until maxBeaconNumber is reached. Once this threshold is reached,no more beacons can be deployed. 
  This poses two problems: first off, if maxBeaconNumber is too low, the initial exploration (done through deploying an irregular grid of beacons) can't cover enough surface of the environment to reach the food. Secondly,
  if the beacons's network is broken into disconnected pieces and maxBeaconNumber is reached with no accessible beacon that can be removed, the algorithm grinds to a halt.
