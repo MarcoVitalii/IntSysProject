@@ -157,11 +157,8 @@ between pDeploy and the removal of beacons is reached. The effectiveness of evad
 very unlikely that other ants create a bridge to escape from local maxima.
 
 
-As maxBeaconNumber grows bigger enough, the performance of the models reach the maximum. Once the path between food and nest is established, the algorithm regolates
-the number of active beacons reaching an equilibrium that is the same for all models. The equilibrium that emerges from "expAndRem" at maxBeaconNumber = 100 shows
-that peak performances in the food retrival (shown by the foodIncomeRate) can be achieved with less beacons, as this settings has, on average, around 100 beacons deployed
-versus the average of 120 for bigger maxBeaconNumber values.
-  
+As maxBeaconNumber grows bigger enough, the performance of the models reach the maximum. Once the path between food and nest is established, the algorithm regulates
+the number of active beacons reaching an equilibrium that is the same for all models. The equilibrium value of the number of beacons can be influenced with maxBeaconNumber in "exp" and "expAndRem" if the parameter maxBeaconNumber is set low enough. This manipulation doesn't really produce a sparser beacons's network as its density is highly influenced by the move action that ants are able to perform. This reduction of mean beacons deployed is statistically linked to a drop in performances instead of a raise. This means that it's not due to a shorter, less dense path.
 
 
 ** Effects of beacon's lifetime on ants performances
@@ -203,7 +200,7 @@ As shown with the simulation's results, the number of deployed beacons reaches a
 the food source. Limitations on this number as a hard limit damages the perfomances if set to low as this first exploration phase won't be completed.
 The proposed pDeploy is able to lower the number of beacons deployed once the equilibrium has been reached at the cost of reducing also the performances. 
 The proposed removal of local maxima is an effective way to deal with them in the condition of a low density system, where the probability of getting reached 
-by the rest of the network is low.
+by the rest of the network is low. This alterations of the algorithm don't provide a tool to enable a sparser beacons's graph bu 
 
 
 
