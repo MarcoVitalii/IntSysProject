@@ -5,9 +5,37 @@ This project further develops the research done in [[http://cs.gmu.edu/~sean/pap
 It's a model developed inside [[https://cs.gmu.edu/%7Eeclab/projects/mason/][MASON]] of foraging ants in a continuous 2D space. 
 
 ** Running the project: 
-Once downloaded MASON from [[https://cs.gmu.edu/%7Eeclab/projects/mason/#Download][the ufficial website]], compile all the java classes inside the project and then run the ForagingWithAntsUI class for a graphical interface to interact with . The simulation can be controlled by the start, pause and stop buttons from the console and there's a model section to modify all relevant parameters of the model.
+Once downloaded MASON and the accessory libraries from [[https://cs.gmu.edu/%7Eeclab/projects/mason/#Download][the ufficial website]], follow their instructions to set correctly the CLASSPATH in your environment and add to it the path to the code folder of your cloned repository of this project.
+Compile all java classes inside the project and from here there are two options to run simulations.
+There's a command line version that runs simulations as
+#+BEGIN_SRC shell
+java ForagingWithBeacons --time 100000 --until 100000 --repeat 10 --parallel 4
+#+END_SRC
+where various flags can control the number of simulations and their duration. If this code is used,
+ inside ./data/ will be generated a settings.txt file containing all parameters's values and there'll 
+be a file for every simulation with its seed as name. The following informations are stored every 100 timesteps:
+| position | content          | position | content       | position | content          | position | content      |
+|----------+------------------+----------+---------------+----------+------------------+----------+--------------|
+|        1 | BeaconLifetime   |        6 | beaconsNumber |       11 | exploration      |       16 | wanderPh     |
+|        2 | maxBeaconNumber  |        7 | avgPathLength |       12 | startExploration |       17 | randomMove   |
+|        3 | time             |        8 | foundFood     |       13 | beaconMov        |       18 | foodPerAnt   |
+|        4 | foodIncomingRate |        9 | foundHome     |       14 | followPh         |       19 | sqFoodPerAnt |
+|        5 | foodRecovered    |       10 | beaconRem     |       15 | beaconDep        |       20 | seed         |
+Fields from 8 to 18 are the distribution of actions taken by all ants.
+FoodPerAnt and sqFoodPerAnt are the mean and the mean of the square of food recovered over the ants. The square is a measure of variance between single ants. 
+
+
+A second version is launched with
+#+BEGIN_SRC shell
+java ForagingWithBeaconsUI
+#+END_SRC
+Here a graphical interface is created with a console that grants access to few relevant model's parameters and allows to start, pause and stop the simulation.
+Every element of the simulation is clickable and inside the inspector panel few parameters are shown.
+
 
 The graphical representation of every component of the model is as it follows:
-Beacons are represented as hexagons with a circle aroun them with the size of their range. The hexagon's color reflects the value of foraging pheromone while the outer circle's color reflects the value of ferrying pheromone. 
-Ants are either yellow if they  don't carry food or red if they do. 
-Nests are represented as magenta ovals and food sources are cyan ovals.
+- Beacons are represented as hexagons with a circle around them with the size of their range. The hexagon's color reflects the value of foraging pheromone while the outer circle's color reflects the value of ferrying pheromone. If the value of pheromones is 0 the hexagon or the outer circle is red as a visual cue to mark the fact that either the beacon is separated from the rest of the network or the propagation of foraging pheromone hasn't started yet(as no food has been found yet).
+- Ants are dots and their color reflects their status: they are yellow if they  don't carry food or red if they do. 
+- Nests are represented as magenta ovals.
+- Food sources are cyan ovals.
+  
